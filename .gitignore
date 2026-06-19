@@ -3,6 +3,9 @@
 qa-*.jpeg
 qa-*.png
 
+# Deploy (helper local)
+.ftphost
+
 # SO
 Thumbs.db
 .DS_Store

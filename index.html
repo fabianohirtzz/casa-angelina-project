@@ -8,7 +8,7 @@
   <!-- Página provisória: não indexar -->
   <meta name="robots" content="noindex, nofollow" />
   <meta name="description" content="Casa Angelina — hospedagem em Trancoso, Bahia. Nosso novo site está chegando. Enquanto isso, reserve sua estadia." />
-  <meta name="theme-color" content="#1d2a24" />
+  <meta name="theme-color" content="#627e02" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Casa Angelina — Trancoso, Bahia" />
@@ -16,7 +16,8 @@
   <meta property="og:image" content="images/casa3.png" />
   <meta property="og:type" content="website" />
 
-  <link rel="icon" href="images/casa3.png" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,9 +26,9 @@
   <style>
     :root {
       --cream: #f5efe4;
-      --ink: #1d2a24;
-      --gold: #c9a86a;
-      --blue: #4a6f8a;
+      --ink: #20280f;          /* verde-oliva profundo (fundo) */
+      --lime: #c8df51;         /* verde-limão da marca */
+      --olive: #627e02;        /* verde-oliva da marca */
       --line: rgba(245, 239, 228, 0.25);
     }
 
@@ -81,6 +82,16 @@
       animation: rise 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
+    /* --- Brasão da marca --- */
+    .logo {
+      display: block;
+      width: clamp(160px, 32vw, 240px);
+      height: auto;
+      margin: 0 auto 1.6rem;
+      border-radius: 50%;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+    }
+
     .kicker {
       font-size: clamp(0.72rem, 1.6vw, 0.85rem);
       letter-spacing: 0.42em;
@@ -97,18 +108,10 @@
       display: inline-block;
       width: 28px;
       height: 1px;
-      background: var(--gold);
+      background: var(--lime);
       vertical-align: middle;
       margin: 0 0.9em;
       opacity: 0.8;
-    }
-
-    .brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
-      font-size: clamp(3rem, 11vw, 6.5rem);
-      line-height: 0.95;
-      letter-spacing: 0.01em;
     }
 
     .tagline {
@@ -168,16 +171,16 @@
     }
 
     .btn--primary {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--ink);
+      background: var(--lime);
+      border-color: var(--lime);
+      color: #2a3406;
       font-weight: 500;
     }
 
     .btn--primary:hover {
-      background: #d9bc83;
-      border-color: #d9bc83;
-      color: var(--ink);
+      background: #d6ea74;
+      border-color: #d6ea74;
+      color: #2a3406;
     }
 
     /* --- Footer note --- */
@@ -216,8 +219,10 @@
     <div class="overlay"></div>
 
     <div class="content">
+      <h1>
+        <img class="logo" src="images/logo.png" alt="Casa Angelina Trancoso" width="240" height="240" />
+      </h1>
       <p class="kicker">Trancoso &middot; Bahia</p>
-      <h1 class="brand">Casa Angelina</h1>
       <p class="tagline">Um refúgio entre o verde e o mar.</p>
       <p class="sub">
         Estamos preparando um novo site para você.

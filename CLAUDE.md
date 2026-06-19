@@ -12,8 +12,10 @@
 Mostrar a casa e gerar reservas/contato (Booking, Instagram, WhatsApp; Airbnb a confirmar).
 
 ## Hospedagem & repositório
-- **Host final:** ErEhost (cliente)
-- **Provisório:** GitHub Pages (esta página de manutenção, com `noindex`)
+- **Host final:** ErEhost (cliente) — **página de manutenção PUBLICADA** em `http://casaangelina.com.br` (2026-06-19)
+  - FTP: host `ftp.casaangelina.com.br`, login cai direto na `public_html`
+  - Pendente: **SSL/HTTPS** (cPanel → SSL/TLS Status → Run AutoSSL). HTTPS hoje dá falha de certificado.
+- **Provisório anterior:** GitHub Pages (https://fabianohirtzz.github.io/casa-angelina-project/)
 - **Repo:** https://github.com/fabianohirtzz/casa-angelina-project.git
 
 ## Entrega atual — Página de manutenção
