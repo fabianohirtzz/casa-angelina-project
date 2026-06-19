@@ -1,0 +1,8 @@
+# QA / ferramentas
+.playwright-mcp/
+qa-*.jpeg
+qa-*.png
+
+# SO
+Thumbs.db
+.DS_Store

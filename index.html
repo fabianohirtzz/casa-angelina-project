@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Casa Angelina — Trancoso, Bahia</title>
+
+  <!-- Página provisória: não indexar -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Casa Angelina — hospedagem em Trancoso, Bahia. Nosso novo site está chegando. Enquanto isso, reserve sua estadia." />
+  <meta name="theme-color" content="#1d2a24" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Casa Angelina — Trancoso, Bahia" />
+  <meta property="og:description" content="Nosso novo site está chegando. Enquanto isso, reserve sua estadia." />
+  <meta property="og:image" content="images/casa3.png" />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="images/casa3.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream: #f5efe4;
+      --ink: #1d2a24;
+      --gold: #c9a86a;
+      --blue: #4a6f8a;
+      --line: rgba(245, 239, 228, 0.25);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      color: var(--cream);
+      background: var(--ink);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 100svh;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    /* --- Background video --- */
+    .bg-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(15, 22, 18, 0.45) 0%, rgba(15, 22, 18, 0) 70%),
+        linear-gradient(180deg, rgba(15, 22, 18, 0.55) 0%, rgba(15, 22, 18, 0.32) 42%, rgba(15, 22, 18, 0.72) 100%);
+    }
+
+    /* --- Content --- */
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      animation: rise 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .kicker {
+      font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      font-weight: 400;
+      color: var(--cream);
+      opacity: 0.85;
+      margin-bottom: 1.4rem;
+    }
+
+    .kicker::before,
+    .kicker::after {
+      content: "";
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      vertical-align: middle;
+      margin: 0 0.9em;
+      opacity: 0.8;
+    }
+
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(3rem, 11vw, 6.5rem);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+    }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.15rem, 3.2vw, 1.6rem);
+      opacity: 0.92;
+      margin-top: 1.1rem;
+    }
+
+    .sub {
+      font-size: clamp(0.92rem, 2vw, 1.02rem);
+      font-weight: 300;
+      line-height: 1.7;
+      opacity: 0.82;
+      margin-top: 1.5rem;
+      max-width: 30em;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* --- Buttons --- */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-top: 2.6rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.85rem 1.6rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 0.86rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 400;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.06);
+      transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn svg { width: 17px; height: 17px; fill: currentColor; }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--cream);
+    }
+
+    .btn--primary {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .btn--primary:hover {
+      background: #d9bc83;
+      border-color: #d9bc83;
+      color: var(--ink);
+    }
+
+    /* --- Footer note --- */
+    .note {
+      position: absolute;
+      bottom: 1.6rem;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 540px) {
+      .actions { flex-direction: column; align-items: stretch; }
+      .btn { justify-content: center; }
+      .kicker::before, .kicker::after { width: 18px; margin: 0 0.6em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .content { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <video class="bg-video" autoplay muted loop playsinline poster="images/casa3.png" id="bgVideo"></video>
+    <div class="overlay"></div>
+
+    <div class="content">
+      <p class="kicker">Trancoso &middot; Bahia</p>
+      <h1 class="brand">Casa Angelina</h1>
+      <p class="tagline">Um refúgio entre o verde e o mar.</p>
+      <p class="sub">
+        Estamos preparando um novo site para você.
+        Enquanto isso, conheça a casa e reserve a sua estadia pelos canais abaixo.
+      </p>
+
+      <nav class="actions">
+        <a class="btn btn--primary" href="https://www.booking.com/hotel/br/casa-angelina.pt-br.html" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z"/></svg>
+          Reservar no Booking
+        </a>
+        <a class="btn" href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.06 1.8.25 2.2.42.6.22 1 .48 1.4.9.43.42.7.82.9 1.4.18.45.37 1.06.42 2.26.06 1.3.07 1.68.07 4.94s0 3.6-.07 4.9c-.05 1.2-.24 1.8-.42 2.26-.22.6-.48 1-.9 1.4-.42.43-.82.7-1.4.9-.45.18-1.06.37-2.26.42-1.3.06-1.68.07-4.94.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.24-2.26-.42-.6-.22-1-.48-1.4-.9-.43-.42-.7-.82-.9-1.4-.18-.45-.37-1.06-.42-2.26C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.24-1.8.42-2.26.22-.6.48-1 .9-1.4.42-.43.82-.7 1.4-.9.45-.18 1.06-.37 2.26-.42C8.4 2.21 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.5 0-4.74.07-.9.04-1.38.2-1.7.32-.43.17-.74.37-1.06.7-.32.31-.52.62-.7 1.05-.12.33-.28.81-.32 1.7C3.4 9.1 3.4 9.46 3.4 12s0 2.9.07 4.14c.04.9.2 1.38.32 1.7.17.44.37.74.7 1.06.31.32.62.52 1.05.7.33.12.81.28 1.7.32 1.25.06 1.6.07 4.75.07s3.5 0 4.74-.07c.9-.04 1.38-.2 1.7-.32.44-.17.74-.37 1.06-.7.32-.31.52-.62.7-1.05.12-.33.28-.81.32-1.7.06-1.25.07-1.6.07-4.15s0-2.9-.07-4.14c-.04-.9-.2-1.38-.32-1.7a2.85 2.85 0 0 0-.7-1.06 2.85 2.85 0 0 0-1.05-.7c-.33-.12-.81-.28-1.7-.32C15.5 4 15.15 4 12 4zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28zm5.14-.6a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3z"/></svg>
+          Instagram
+        </a>
+        <a class="btn" href="https://wa.me/557399619953?text=Ol%C3%A1%21%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Casa%20Angelina." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.93.5 3.78 1.46 5.42L2.1 22l4.85-1.27a9.8 9.8 0 0 0 4.7 1.2h.01c5.43 0 9.84-4.4 9.84-9.84S17.47 2 12.04 2zm0 17.9h-.01a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-2.88.76.77-2.81-.2-.31a8.06 8.06 0 0 1-1.24-4.31c0-4.49 3.66-8.14 8.16-8.14a8.1 8.1 0 0 1 8.13 8.15c0 4.49-3.66 8.14-8.15 8.14zm4.47-6.1c-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.24-.12-1.03-.38-1.97-1.21-.73-.65-1.22-1.45-1.36-1.7-.14-.24-.02-.37.1-.49.1-.1.25-.29.37-.43.12-.14.16-.24.24-.4.08-.17.04-.31-.02-.43-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.47-.02a.9.9 0 0 0-.65.31c-.22.24-.85.84-.85 2.05s.87 2.38.99 2.54c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z"/></svg>
+          WhatsApp
+        </a>
+      </nav>
+    </div>
+
+    <p class="note">Site em construção</p>
+  </main>
+
+  <script>
+    // Escolhe o vídeo de fundo conforme o tamanho da tela (evita baixar os dois).
+    (function () {
+      var v = document.getElementById('bgVideo');
+      var isMobile = window.matchMedia('(max-width: 768px)').matches;
+      v.src = isMobile ? 'videos/video-mobile.mp4' : 'videos/video-desktop.mp4';
+      var play = v.play();
+      if (play && play.catch) { play.catch(function () {}); }
+    })();
+  </script>
+</body>
+</html>
