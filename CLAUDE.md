@@ -32,10 +32,17 @@ a **madeira natural**, a piscina e a mata ao redor. Sensação de natureza e aco
 - **Fotos/vídeos:** plano de material profissional com **drone**; fotos de alta qualidade são
   decisivas para conversão. Material ideal antes do fim do desenvolvimento.
 
+## Design
+- **Design skill:** `casa-angelina-design` (nível de usuário, `~/.claude/skills/`). Acionar
+  sempre que tocar UI/copy/motion do projeto. Tema "Trancoso botânico": claro/creme, verdes
+  da marca, line-art botânico do logo, foto protagonista, motion suave.
+- **Paleta:** verde escuro `#567332` (títulos/ink) + verde claro `#d0f0aa` (fills/botões),
+  base creme `#f5efe4`, verde profundo `#2f3d1c` (âncoras/rodapé). Tipografia Cormorant Garamond + Jost.
+
 ## Stack
 - **Atual:** HTML/CSS/JS estático (one-page de manutenção), publicado em GitHub Pages.
-- **Site definitivo (a confirmar):** site estático multi-seção/multi-página com foco em
-  apresentação + CTAs de reserva. Stack a fechar na fase de Design/Plano.
+- **Site definitivo:** **multi-página** estático (HTML/CSS/JS), foco em apresentação + CTAs de
+  reserva. Sitemap: Home, A casa, Acomodações, Galeria, Pacotes, Trancoso, Contato (ver design skill LAYOUT.md).
 
 ## Escopo — dois subprojetos independentes
 > Pelo freela-method, escopos de tipos diferentes são tratados como subprojetos separados.
@@ -86,6 +93,7 @@ Sem travessões, sem emojis, números concretos, português do Brasil.
   nova paleta registrada.
 - **Entregue:** página de manutenção (one-page, vídeo de fundo, CTAs, `noindex`) no GitHub Pages
   e na ErEhost.
-- **Decisões em aberto:** (1) criar `casa-angelina-design` skill ou usar `frontend-design`;
-  (2) tipo do site definitivo (landing única vs multi-página); (3) confirmar WhatsApp e link do Airbnb.
+- **Decididas:** design skill `casa-angelina-design` criada; site **multi-página**.
+- **Decisões em aberto:** confirmar WhatsApp (8 dígitos no readme) e link do Airbnb. Construção do
+  site começa por etapas (próxima: planejar/montar a Home).
 - **Assets:** `images/casa1..7.png`, `images/logo*.png`, `images/favicon.png`, `videos/video-desktop.mp4`, `videos/video-mobile.mp4`.
