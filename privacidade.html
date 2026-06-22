@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidade | Casa Angelina, Trancoso</title>
+
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Política de Privacidade da Casa Angelina, hospedagem em Trancoso, Bahia. Como tratamos os seus dados ao falar com a gente e ao navegar no site." />
+  <meta name="theme-color" content="#2f3d1c" />
+
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --verde-escuro: #567332;
+      --verde-claro: #d0f0aa;
+      --verde-profundo: #2f3d1c;
+      --verde-linha: rgba(86, 115, 50, 0.18);
+      --creme: #f5efe4;
+      --off-white: #fbf9f4;
+      --areia: #e8ddca;
+      --tinta: #2b3320;
+      --tinta-suave: rgba(43, 51, 32, 0.68);
+      --tinta-dim: rgba(43, 51, 32, 0.46);
+      --font-display: "Cormorant Garamond", "Times New Roman", serif;
+      --font-body: "Jost", "Helvetica Neue", system-ui, sans-serif;
+      --r-md: 18px;
+      --r-pill: 999px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      color: var(--tinta);
+      background: var(--creme);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: var(--verde-escuro); }
+
+    /* Barra superior */
+    .policy-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px clamp(20px, 6vw, 80px);
+      border-bottom: 1px solid var(--verde-linha);
+      background: var(--off-white);
+    }
+    .policy-nav__brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+    .policy-nav__brand img { width: 44px; height: 44px; border-radius: 50%; }
+    .policy-nav__brand span { font-family: var(--font-display); font-size: 22px; color: var(--verde-escuro); }
+    .policy-nav__back {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none; color: var(--verde-escuro);
+      border: 1px solid var(--verde-linha); border-radius: var(--r-pill);
+      padding: 10px 20px; transition: background .2s var(--ease-soft), border-color .2s var(--ease-soft);
+    }
+    .policy-nav__back:hover { background: rgba(86, 115, 50, 0.07); border-color: var(--verde-escuro); }
+
+    /* Conteúdo */
+    .policy {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(56px, 9vw, 104px) clamp(20px, 6vw, 40px) clamp(64px, 9vw, 110px);
+    }
+    .policy__eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 12px; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde-escuro); margin-bottom: 18px;
+    }
+    .policy__eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--verde-escuro); opacity: 0.55; }
+    .policy__title {
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(38px, 6vw, 64px); line-height: 1.05; color: var(--tinta);
+      letter-spacing: 0.01em;
+    }
+    .policy__title em { font-style: italic; color: var(--verde-escuro); }
+    .policy__updated { font-size: 13px; color: var(--tinta-dim); margin-top: 16px; }
+
+    .policy__lede {
+      font-family: var(--font-display); font-style: italic; font-weight: 400;
+      font-size: clamp(18px, 2.2vw, 23px); line-height: 1.5; color: var(--tinta-suave);
+      margin-top: 26px;
+    }
+
+    .policy h2 {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(24px, 3vw, 32px); color: var(--verde-escuro);
+      margin: 48px 0 14px;
+    }
+    .policy p { margin-top: 14px; color: var(--tinta); }
+    .policy ul { margin: 14px 0 0; padding-left: 0; list-style: none; display: grid; gap: 10px; }
+    .policy li { position: relative; padding-left: 26px; color: var(--tinta); }
+    .policy li::before {
+      content: ""; position: absolute; left: 0; top: 0.62em; width: 14px; height: 7px;
+      background: var(--verde-escuro);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'%3E%3Cpath d='M0 4c4-4 8-4 16 0-8 4-12 4-16 0z'/%3E%3C/svg%3E") center/contain no-repeat;
+              mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'%3E%3Cpath d='M0 4c4-4 8-4 16 0-8 4-12 4-16 0z'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .policy strong { font-weight: 500; color: var(--tinta); }
+
+    .policy__note {
+      margin-top: 22px; padding: 18px 22px;
+      background: rgba(208, 240, 170, 0.35); border: 1px solid var(--verde-linha);
+      border-radius: var(--r-md); font-size: 14.5px; color: var(--tinta-suave);
+    }
+
+    .policy__foot {
+      margin-top: 56px; padding-top: 26px; border-top: 1px solid var(--verde-linha);
+      font-size: 14px; color: var(--tinta-suave);
+      display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between;
+    }
+    .policy__foot a { text-decoration: none; }
+    .policy__foot a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header class="policy-nav">
+    <a class="policy-nav__brand" href="index.html" aria-label="Casa Angelina, página inicial">
+      <img src="images/logo.png" alt="Casa Angelina Trancoso" width="44" height="44" />
+      <span>Casa Angelina</span>
+    </a>
+    <a class="policy-nav__back" href="index.html">Voltar ao site</a>
+  </header>
+
+  <main class="policy">
+    <p class="policy__eyebrow">Casa Angelina · Trancoso</p>
+    <h1 class="policy__title"><em>Política</em> de Privacidade</h1>
+    <p class="policy__updated">Última atualização: junho de 2026.</p>
+
+    <p class="policy__lede">A sua privacidade importa para a gente tanto quanto o seu descanso. Aqui explicamos, de forma simples, quais dados tratamos e por quê.</p>
+
+    <h2>1. Quem somos</h2>
+    <p>A Casa Angelina é uma casa de hospedagem em Trancoso, Bahia, alugada inteira para um único grupo por vez. Este site é o nosso canal de apresentação e de contato. Para falar com a gente, use o WhatsApp <strong>+55 73 99961-9953</strong> ou o Instagram <strong>@casangelinatrancoso</strong>.</p>
+
+    <h2>2. Quais dados coletamos</h2>
+    <p>Coletamos apenas o necessário para responder você e organizar a sua estadia:</p>
+    <ul>
+      <li>Dados que você nos envia ao falar conosco: nome, telefone, e-mail, datas pretendidas e número de hóspedes.</li>
+      <li>Conteúdo das mensagens trocadas pelo WhatsApp, Instagram ou e-mail.</li>
+      <li>Dados de navegação coletados por ferramentas de análise (páginas visitadas, origem do acesso, tipo de dispositivo), de forma agregada.</li>
+    </ul>
+    <p>Não solicitamos dados sensíveis e não pedimos documentos pelo site.</p>
+
+    <h2>3. Como usamos os seus dados</h2>
+    <ul>
+      <li>Responder às suas dúvidas e organizar a reserva da casa.</li>
+      <li>Enviar informações sobre datas, valores, regras e detalhes da estadia.</li>
+      <li>Entender como o site é usado e melhorá-lo.</li>
+    </ul>
+
+    <h2>4. Com quem compartilhamos</h2>
+    <p>Não vendemos os seus dados. Eles podem ser compartilhados apenas quando necessário para a sua reserva ou para o funcionamento do site:</p>
+    <ul>
+      <li>Plataformas de reserva (Booking, Airbnb) quando você reserva por elas, conforme as políticas de cada plataforma.</li>
+      <li>Meios de pagamento, em reservas diretas, para processar valores com segurança.</li>
+      <li>Ferramentas de análise e anúncios (como Google e Meta), de forma agregada, para medir o desempenho do site.</li>
+    </ul>
+
+    <h2>5. Cookies e análise</h2>
+    <p>Usamos cookies e ferramentas como o Google Analytics e o Google Search Console para entender o uso do site. Você pode bloquear ou apagar cookies nas configurações do seu navegador a qualquer momento. Sem eles, algumas medições deixam de funcionar, mas a navegação continua.</p>
+
+    <h2>6. Os seus direitos (LGPD)</h2>
+    <p>De acordo com a Lei Geral de Proteção de Dados (Lei 13.709/2018), você pode solicitar a qualquer momento:</p>
+    <ul>
+      <li>Confirmar se tratamos os seus dados e acessar o que temos.</li>
+      <li>Corrigir dados incompletos ou desatualizados.</li>
+      <li>Pedir a exclusão dos seus dados, quando aplicável.</li>
+      <li>Revogar o consentimento dado anteriormente.</li>
+    </ul>
+    <p>Para exercer qualquer um desses direitos, fale com a gente pelo WhatsApp <strong>+55 73 99961-9953</strong>.</p>
+
+    <h2>7. Segurança e retenção</h2>
+    <p>Adotamos medidas razoáveis para proteger os seus dados e os guardamos apenas pelo tempo necessário para atender você e cumprir obrigações legais. Depois disso, são descartados de forma segura.</p>
+
+    <h2>8. Alterações desta política</h2>
+    <p>Podemos atualizar esta política para refletir melhorias no site ou mudanças na lei. A data no topo indica a última revisão.</p>
+
+    <div class="policy__foot">
+      <span>Casa Angelina · Trancoso, Bahia</span>
+      <span><a href="cancelamento.html">Cancelamento</a> · <a href="reserva.html">Reserva</a></span>
+    </div>
+  </main>
+</body>
+</html>
