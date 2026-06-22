@@ -454,6 +454,31 @@
     @keyframes rise { to { opacity: 1; transform: none; } }
 
     /* ============================================================
+       VÍDEO DE FUNDO CONTÍNUO
+       Um único vídeo fixo no viewport (z-index negativo, mesma técnica
+       do rodapé) que aparece sob um véu creme onde a "banda" fica
+       transparente: galeria de ambientes -> blocos -> seção "Duas formas
+       de ficar". As seções/cartões opacos o cobrem, então é o mesmo
+       vídeo contínuo por baixo de tudo, como uma textura de sol na folhagem.
+       ============================================================ */
+    .band-video {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .band-video__scrim {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      /* véu creme por cima do vídeo: fundo claro, filmagem só insinuada */
+      background:
+        linear-gradient(180deg, rgba(245, 239, 228, 0.82) 0%, rgba(245, 239, 228, 0.72) 45%, rgba(245, 239, 228, 0.84) 100%);
+    }
+
+    /* ============================================================
        OS AMBIENTES — galeria zoom-parallax com texto no centro.
        Port vanilla do zoom-parallax: ao rolar, 6 fotos dão zoom e
        saem pela borda; no meio fica o texto da seção (espaço vazio).
@@ -462,14 +487,14 @@
     .ambientes {
       position: relative;
       height: 240vh;
-      background: var(--creme);
+      background: transparent;          /* revela o vídeo de fundo */
     }
     .ambientes__sticky {
       position: sticky;
       top: 0;
       height: 100vh;
       overflow: hidden;
-      background: var(--creme);
+      background: transparent;          /* revela o vídeo de fundo */
       padding: 30px;
     }
 
@@ -566,7 +591,7 @@
        BLOCOS — Piscina e deck / Sala e varanda / Jardim e mata
        ============================================================ */
     .blocos {
-      background: var(--creme);
+      background: transparent;          /* revela o vídeo de fundo */
       padding: clamp(20px, 3vh, 40px) clamp(20px, 6vw, 80px) clamp(80px, 13vh, 140px);
       text-align: center;
     }
@@ -614,7 +639,7 @@
        "Reserve agora". Sem nenhum canto arredondado nesta seção.
        ============================================================ */
     .formas {
-      background: var(--creme);
+      background: transparent;          /* revela o vídeo de fundo */
       padding: clamp(30px, 6vh, 70px) clamp(16px, 5vw, 64px) clamp(72px, 12vh, 140px);
     }
     .formas__list {
@@ -1014,6 +1039,14 @@
   </style>
 </head>
 <body>
+
+  <!-- ===================== VÍDEO DE FUNDO CONTÍNUO ===================== -->
+  <!-- Fixo no viewport, atrás de tudo (z-index negativo). Aparece sob o véu
+       creme onde a banda ambientes -> blocos -> "Duas formas" é transparente. -->
+  <video class="band-video" autoplay muted loop playsinline poster="images/casa6.png" aria-hidden="true">
+    <source src="videos/video-background2.mp4" type="video/mp4" />
+  </video>
+  <div class="band-video__scrim" aria-hidden="true"></div>
 
   <!-- ===================== NAV ===================== -->
   <header class="nav" data-state="top" id="nav">
