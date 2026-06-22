@@ -739,9 +739,9 @@
               mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'%3E%3Cpath d='M0 4c4-4 8-4 16 0-8 4-12 4-16 0z'/%3E%3C/svg%3E") center/contain no-repeat;
     }
 
-    /* CTA "Reserve agora" — sem cantos (override do pill global, só aqui) */
+    /* CTA "Reserve agora" — mantém o pill padrão (igual aos botões do header);
+       só os cartões/imagens é que ficam sem canto arredondado nesta seção */
     .forma__cta { margin-top: 28px; }
-    .formas .btn { border-radius: 0; }
 
     @media (max-width: 760px) {
       .forma:nth-child(1) { top: clamp(72px, 10vh, 96px); }
