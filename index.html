@@ -62,7 +62,14 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; }
+    /* min-height (não height:100%) para não virar container de rolagem ao
+       combinar com overflow-x — senão a página trava sem rolar */
+    html, body { min-height: 100%; }
+    /* trava o arrasto lateral: nada empurra a página para os lados */
+    html { overflow-x: hidden; }
+    body { overflow-x: hidden; position: relative; width: 100%; max-width: 100%; overscroll-behavior-x: none; }
+    /* trava o scroll do corpo enquanto o menu mobile está aberto */
+    body.nav-open { overflow: hidden; }
 
     body {
       font-family: var(--font-body);
@@ -202,6 +209,90 @@
     }
 
     /* ============================================================
+       MENU MOBILE — botão sanduíche + gaveta (drawer)
+       No desktop fica escondido; abaixo de 1040px ele substitui os
+       botões e abre a gaveta com os links + Fale conosco.
+       ============================================================ */
+    .nav__toggle {
+      display: none;
+      position: relative;
+      z-index: 2;
+      width: 46px;
+      height: 46px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      cursor: pointer;
+    }
+    .nav__toggle span {
+      display: block;
+      width: 19px;
+      height: 1.7px;
+      border-radius: 2px;
+      background: #fff;
+      transition: transform .3s var(--ease-out), opacity .2s var(--ease-soft), background .3s var(--ease-soft);
+    }
+    .nav[data-state="scrolled"] .nav__toggle { border-color: rgba(208, 240, 170, 0.4); }
+    /* aberto: vira X em verde escuro (a gaveta é creme por baixo) */
+    body.nav-open .nav__toggle { background: var(--off-white); border-color: var(--verde-linha); }
+    body.nav-open .nav__toggle span { background: var(--verde-escuro); }
+    body.nav-open .nav__toggle span:nth-child(1) { transform: translateY(6.7px) rotate(45deg); }
+    body.nav-open .nav__toggle span:nth-child(2) { opacity: 0; }
+    body.nav-open .nav__toggle span:nth-child(3) { transform: translateY(-6.7px) rotate(-45deg); }
+    /* com a gaveta creme aberta, o logo branco escurece p/ não sumir */
+    body.nav-open .nav__logo { filter: brightness(0) saturate(0); opacity: 0.72; }
+
+    .nav__drawer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 96px 32px 48px;
+      background: var(--creme);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-14px);
+      transition: opacity .4s var(--ease-soft), transform .45s var(--ease-out), visibility .4s;
+    }
+    body.nav-open .nav__drawer { opacity: 1; visibility: visible; transform: none; }
+    .nav__drawer-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .nav__drawer-links a {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 8vw, 36px);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--tinta);
+      text-decoration: none;
+      padding: 9px 12px;
+      transition: color .2s var(--ease-soft);
+    }
+    .nav__drawer-links a:hover, .nav__drawer-links a:active { color: var(--verde-escuro); }
+    .nav__drawer-sprig {
+      width: 64px;
+      height: auto;
+      color: var(--verde-escuro);
+      opacity: 0.55;
+      margin: 6px 0 24px;
+    }
+    .nav__drawer-cta { margin-top: 4px; }
+
+    /* ============================================================
        BOTÕES
        ============================================================ */
     .btn {
@@ -323,7 +414,7 @@
       opacity: 0.92;
       margin-bottom: 22px;
     }
-    .hero__sun { font-size: 17px; line-height: 1; filter: drop-shadow(0 0 14px rgba(255, 214, 120, 0.6)); }
+    .hero__sun { font-size: 0.82em; line-height: 1; vertical-align: -0.04em; filter: drop-shadow(0 0 18px rgba(255, 214, 120, 0.6)); }
     .hero__eyebrow-rule { display: block; width: 28px; height: 1px; background: var(--verde-claro); opacity: 0.8; }
 
     /* Typewriter headline */
@@ -569,22 +660,36 @@
       overflow: hidden;
     }
 
-    /* Versão estática (mobile / reduced-motion): sem zoom, texto limpo */
+    /* Versão estática (reduced-motion): sem zoom; texto no topo e as fotos
+       da galeria numa grade simples, para a galeria nunca sumir. */
     .ambientes.is-static { height: auto; }
     .ambientes.is-static .ambientes__sticky {
       position: static;
       height: auto;
-      padding: clamp(70px, 12vh, 120px) clamp(20px, 6vw, 60px);
+      overflow: visible;
+      padding: clamp(60px, 11vh, 110px) clamp(20px, 6vw, 60px);
     }
     .ambientes.is-static .zp {
-      display: block;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: none;
+      gap: 12px;
       height: auto;
+      max-width: 720px;
+      margin: 0 auto;
     }
-    .ambientes.is-static .zp__el { display: none; }
+    .ambientes.is-static .zp__el {
+      transform: none !important;
+      opacity: 1 !important;
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+    }
     .ambientes.is-static .ambientes__center {
+      grid-column: 1 / -1;
+      order: -1;
       width: 100%;
       max-width: 640px;
-      margin: 0 auto;
+      margin: 0 auto 18px;
       padding: 0;
     }
     .ambientes.is-static .ambientes__lede {
@@ -592,6 +697,18 @@
       opacity: 1;
       overflow: visible;
       margin-top: 18px;
+    }
+
+    /* Mobile (com o efeito de zoom ativo): título menor para caber no vão
+       central no início, palco um pouco mais curto para rolar mais leve. */
+    @media (max-width: 760px) {
+      .ambientes { height: 200vh; }
+      .ambientes__sticky { padding: 10px; }
+      .zp { gap: 10px; }
+      .ambientes__eyebrow { font-size: 10px; gap: 8px; margin-bottom: 10px; }
+      .ambientes__eyebrow-rule { width: 18px; }
+      .ambientes__title { font-size: clamp(26px, 8vw, 34px); }
+      .ambientes__lede { font-size: 16px; }
     }
 
     /* ============================================================
@@ -778,10 +895,19 @@
       .forma:nth-child(1) { top: clamp(72px, 10vh, 96px); }
       .forma:nth-child(2) { top: calc(clamp(72px, 10vh, 96px) + 16px); }
       .forma:nth-child(3) { top: calc(clamp(72px, 10vh, 96px) + 32px); }
-      .forma__card { min-height: clamp(440px, 88vh, 700px); }
+      .forma__card { min-height: clamp(440px, 82vh, 700px); }
       .forma__overlay { max-width: 100%; }
       .forma__bullets { max-width: 100%; }
-      .forma__card--intro { padding: 40px 24px; }
+
+      /* Texto no TOPO de cada cartão: o próximo cartão sobe pela base e
+         cobre o texto por último, dando tempo de ler. */
+      .forma__card--intro { padding: 40px 24px; align-items: flex-start; }
+      .forma__card--photo { align-items: flex-start; }
+      /* com o texto no alto, o véu fica escuro em cima e some embaixo */
+      .forma__card--photo .forma__scrim {
+        background:
+          linear-gradient(180deg, rgba(20, 28, 12, 0.80) 0%, rgba(20, 28, 12, 0.42) 42%, rgba(20, 28, 12, 0) 78%);
+      }
     }
 
     /* ============================================================
@@ -870,8 +996,8 @@
     .pac__content.is-swapping .pac__price,
     .pac__content.is-swapping .pac__desc { opacity: 0; transform: translateY(8px); }
 
-    .pac__controls { display: flex; align-items: center; gap: 18px; margin-top: 28px; }
-    .pac__arrows { display: flex; gap: 10px; }
+    /* mesmo padrão das avaliações: seta — contador — seta, centralizado */
+    .pac__controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 28px; }
     .pac__arrow {
       width: 46px; height: 46px; border-radius: 50%;
       display: grid; place-items: center; cursor: pointer;
@@ -895,23 +1021,29 @@
       .pac__content { max-width: 100%; text-align: center; margin-inline: auto; }
       .pac__desc { margin-inline: auto; }
       .pac__controls { justify-content: center; }
+      /* centraliza todo o cabeçalho da seção (eyebrow + título + lede) */
+      .pacotes__head { text-align: center; }
+      .pacotes__eyebrow { justify-content: center; }
+      .pacotes__lede { margin-inline: auto; }
     }
 
     /* ============================================================
        RESPONSIVO
        ============================================================ */
-    /* Sem drawer mobile ainda: abaixo do desktop, escondemos os links */
+    /* Abaixo do desktop: escondemos os links e os botões da barra e
+       trocamos por um sanduíche que abre a gaveta mobile. */
     @media (max-width: 1040px) {
       .nav__links { display: none; }
+      .nav__btn { display: none !important; }
+      .nav__toggle { display: inline-flex; }
+      .nav__drawer { display: flex; }
+      .nav__actions { min-height: 46px; gap: 0; }
     }
 
     @media (max-width: 760px) {
       .nav { padding: 18px clamp(16px, 5vw, 28px); }
       .nav__logo { height: 46px; }
       .nav[data-state="scrolled"] { max-width: calc(100% - 24px); padding: 9px 10px 9px 18px; }
-
-      /* No mobile, "Login" some e fica só "Cadastrar" no topo, p/ caber */
-      .nav__btn--open.nav__btn--login { display: none; }
 
       .reserva {
         flex-direction: column;
@@ -1165,13 +1297,22 @@
     .footer-bottom a:hover { color: var(--verde-claro); }
 
     @media (max-width: 860px) {
-      .footer-top { grid-template-columns: 1fr; gap: 34px; }
+      .footer-top { grid-template-columns: 1fr; gap: 0; }
+      /* separa o bloco da marca das colunas de links */
+      .footer-cols {
+        margin-top: 32px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(208, 240, 170, 0.18);
+      }
     }
     @media (max-width: 560px) {
       .footer-card { transform: rotate(0deg); padding: 40px 22px 26px; }
       .site-footer.is-revealed .footer-card { transform: rotate(0deg) translateY(0); }
       .site-footer:not(.is-revealed) .footer-card { transform: rotate(0deg) translateY(34px); }
-      .footer-cols { grid-template-columns: 1fr 1fr; }
+      /* uma coluna só, cada grupo separado por um fio — nada misturado */
+      .footer-cols { grid-template-columns: 1fr; gap: 0; }
+      .footer-col { padding: 22px 0; border-top: 1px solid rgba(208, 240, 170, 0.12); }
+      .footer-col:first-child { padding-top: 0; border-top: none; }
       .footer-actions .btn { flex: 1; justify-content: center; }
     }
 
@@ -1500,7 +1641,7 @@
 
     @media (max-width: 760px) {
       .lugar { min-height: 100vh; height: auto; }
-      .mapa { height: min(54vh, 420px); }
+      .mapa { height: min(62vh, 470px); }
       .mapa__info {
         position: static;
         width: auto;
@@ -1566,6 +1707,9 @@
       font-size: clamp(32px, 5vw, 60px); line-height: 1.04; color: var(--off-white);
     }
     .avaliacoes__title em { font-style: italic; color: var(--verde-claro); }
+    /* quebra "Bem avaliada / por quem chega" só no mobile */
+    .mq-br { display: none; }
+    @media (max-width: 760px) { .mq-br { display: inline; } }
 
     /* Selo da nota geral */
     .avaliacoes__score {
@@ -1721,8 +1865,38 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.93.5 3.78 1.46 5.42L2.1 22l4.85-1.27a9.8 9.8 0 0 0 4.7 1.2h.01c5.43 0 9.84-4.4 9.84-9.84S17.47 2 12.04 2zm0 17.9h-.01a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-2.88.76.77-2.81-.2-.31a8.06 8.06 0 0 1-1.24-4.31c0-4.49 3.66-8.14 8.16-8.14a8.1 8.1 0 0 1 8.13 8.15c0 4.49-3.66 8.14-8.15 8.14zm4.47-6.1c-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.24-.12-1.03-.38-1.97-1.21-.73-.65-1.22-1.45-1.36-1.7-.14-.24-.02-.37.1-.49.1-.1.25-.29.37-.43.12-.14.16-.24.24-.4.08-.17.04-.31-.02-.43-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.47-.02a.9.9 0 0 0-.65.31c-.22.24-.85.84-.85 2.05s.87 2.38.99 2.54c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z"/></svg>
         Fale conosco
       </a>
+
+      <button class="nav__toggle" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+
+  <!-- ===================== GAVETA MOBILE ===================== -->
+  <div class="nav__drawer" id="navDrawer" aria-hidden="true">
+    <nav class="nav__drawer-links" aria-label="Navegação mobile">
+      <a href="a-casa.html">A casa</a>
+      <a href="acomodacoes.html">Acomodações</a>
+      <a href="galeria.html">Galeria</a>
+      <a href="pacotes.html">Pacotes</a>
+      <a href="trancoso.html">Trancoso</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+
+    <svg class="nav__drawer-sprig" viewBox="0 0 48 16" fill="none" stroke="currentColor"
+         stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2 8h44" />
+      <path d="M14 8c3-4 7-5 10-4-1 3-4 5-7 5" />
+      <path d="M30 8c3 4 7 5 10 4-1-3-4-5-7-5" />
+    </svg>
+
+    <a class="btn btn--primary nav__drawer-cta"
+       href="https://wa.me/5573999619953?text=Ol%C3%A1%21%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Casa%20Angelina."
+       target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.93.5 3.78 1.46 5.42L2.1 22l4.85-1.27a9.8 9.8 0 0 0 4.7 1.2h.01c5.43 0 9.84-4.4 9.84-9.84S17.47 2 12.04 2zm0 17.9h-.01a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-2.88.76.77-2.81-.2-.31a8.06 8.06 0 0 1-1.24-4.31c0-4.49 3.66-8.14 8.16-8.14a8.1 8.1 0 0 1 8.13 8.15c0 4.49-3.66 8.14-8.15 8.14zm4.47-6.1c-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.24-.12-1.03-.38-1.97-1.21-.73-.65-1.22-1.45-1.36-1.7-.14-.24-.02-.37.1-.49.1-.1.25-.29.37-.43.12-.14.16-.24.24-.4.08-.17.04-.31-.02-.43-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.47-.02a.9.9 0 0 0-.65.31c-.22.24-.85.84-.85 2.05s.87 2.38.99 2.54c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z"/></svg>
+      Fale conosco
+    </a>
+  </div>
 
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="topo">
@@ -1733,13 +1907,13 @@
 
     <div class="hero__content">
       <p class="hero__eyebrow rise rise--1">
-        <span class="hero__sun" aria-hidden="true">☀️</span>
+        <span class="hero__eyebrow-rule" aria-hidden="true"></span>
         Trancoso · Bahia
         <span class="hero__eyebrow-rule" aria-hidden="true"></span>
       </p>
 
       <h1 class="hero__type rise rise--2">
-        <span class="hero__type-static">Sua casa em Trancoso,</span>
+        <span class="hero__type-static">Sua casa em <span class="hero__sun" aria-hidden="true">🌞</span> Trancoso,</span>
         <span class="hero__type-dyn"><span id="typewriter">um quarto só seu</span><span class="hero__caret" aria-hidden="true"></span></span>
       </h1>
 
@@ -1922,15 +2096,13 @@
           <p class="pac__desc" id="pacDesc"></p>
 
           <div class="pac__controls">
-            <div class="pac__arrows">
-              <button class="pac__arrow" id="pacPrev" type="button" aria-label="Pacote anterior">
-                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              </button>
-              <button class="pac__arrow" id="pacNext" type="button" aria-label="Próximo pacote">
-                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
-            </div>
+            <button class="pac__arrow" id="pacPrev" type="button" aria-label="Pacote anterior">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
             <span class="pac__counter"><span class="now" id="pacNow">01</span> / <span id="pacTotal">01</span></span>
+            <button class="pac__arrow" id="pacNext" type="button" aria-label="Próximo pacote">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
           </div>
 
           <a class="btn btn--primary pac__cta" id="pacCta" href="#" target="_blank" rel="noopener">Contratar pacote</a>
@@ -2159,7 +2331,7 @@
         Quem já ficou
         <span class="avaliacoes__eyebrow-rule" aria-hidden="true"></span>
       </p>
-      <h2 class="avaliacoes__title"><em>Bem avaliada</em> por quem chega</h2>
+      <h2 class="avaliacoes__title"><em>Bem avaliada</em><br class="mq-br" /> por quem chega</h2>
       <div class="avaliacoes__score">
         <span class="avaliacoes__score-num">9,6</span>
         <span class="stars" aria-hidden="true">
@@ -2300,6 +2472,50 @@
       update();
     })();
 
+    // ---- Menu mobile: sanduíche abre/fecha a gaveta ----
+    (function () {
+      var toggle = document.getElementById('navToggle');
+      var drawer = document.getElementById('navDrawer');
+      if (!toggle || !drawer) return;
+
+      function setOpen(open) {
+        document.body.classList.toggle('nav-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+      toggle.addEventListener('click', function () {
+        setOpen(!document.body.classList.contains('nav-open'));
+      });
+      // fecha ao tocar num link ou no botão Fale conosco
+      [].forEach.call(drawer.querySelectorAll('a'), function (a) {
+        a.addEventListener('click', function () { setOpen(false); });
+      });
+      window.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+      // ao voltar para o desktop, garante a gaveta fechada
+      window.matchMedia('(min-width: 1041px)').addEventListener('change', function (e) {
+        if (e.matches) setOpen(false);
+      });
+    })();
+
+    // ---- Vídeos: força o autoplay (iOS/Low Power costuma pausar) ----
+    (function () {
+      var vids = [].slice.call(document.querySelectorAll('video'));
+      if (!vids.length) return;
+      function tryPlay() {
+        vids.forEach(function (v) {
+          v.muted = true;
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        });
+      }
+      tryPlay();
+      // primeira interação destrava o play onde o autoplay foi bloqueado
+      document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+      document.addEventListener('click', tryPlay, { once: true });
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) tryPlay(); });
+    })();
+
     // ---- Typewriter (port vanilla do efeito danielpetho) ----
     (function () {
       var el = document.getElementById('typewriter');
@@ -2312,9 +2528,6 @@
         'o seu réveillon',
         'do seu jeito'
       ];
-
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) { el.textContent = phrases[0]; return; }
 
       var TYPE = 70, ERASE = 38, HOLD = 1700, GAP = 420;
       var pi = 0, ci = 0, erasing = false;
@@ -2388,8 +2601,7 @@
       if (!section) return;
 
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var mobile = window.matchMedia('(max-width: 760px)').matches;
-      if (reduce || mobile) { section.classList.add('is-static'); return; }
+      if (reduce) { section.classList.add('is-static'); return; }
 
       var stage = section.querySelector('.zp');
       var tiles = [].slice.call(section.querySelectorAll('.zp__el')).map(function (el) {
@@ -2616,6 +2828,16 @@
         photos.forEach(function (el, idx) {
           el.addEventListener('click', function () { if (idx !== active) { stopAuto(); go(idx); } });
         });
+
+        // swipe no toque: arrastar a pilha para o lado troca de pacote
+        var sx = null;
+        stack.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+        stack.addEventListener('touchend', function (e) {
+          if (sx === null) return;
+          var dx = e.changedTouches[0].clientX - sx;
+          if (Math.abs(dx) > 40) { stopAuto(); go(active + (dx < 0 ? 1 : -1)); }
+          sx = null;
+        }, { passive: true });
       }
 
       // autoplay suave; pausa no hover e após qualquer interação
@@ -2665,14 +2887,14 @@
           tag: '2,5 km', dist: '2,5 km'
         },
         {
-          pin: 'nativos', focus: [1170, 1320], world: 980,
+          pin: 'nativos', focus: [1170, 1320], world: 980, mWorld: 1320,
           eyebrow: 'Pé na areia', name: 'Praia dos Nativos',
           meta: 'Mar calmo e barracas logo abaixo das falésias.',
           route: 'M900 1250 Q 1150 1290 1430 1380', mid: [1150, 1300],
           tag: '2,5 km', dist: '2,5 km'
         },
         {
-          pin: 'coqueiros', focus: [1200, 1390], world: 1060,
+          pin: 'coqueiros', focus: [1200, 1390], world: 1060, mWorld: 1400,
           eyebrow: 'Mais um pé na areia', name: 'Praia dos Coqueiros',
           meta: 'Coqueiros e águas calmas, logo ao sul dos Nativos.',
           route: 'M900 1250 Q 1180 1340 1470 1500', mid: [1205, 1385],
@@ -2686,7 +2908,7 @@
           tag: '1,1 km', dist: 'a partir de 1,1 km'
         },
         {
-          pin: 'aeroporto', focus: [1040, 880], world: 2800,
+          pin: 'aeroporto', focus: [1040, 880], world: 2800, mWorld: 1800,
           eyebrow: 'Chegada', name: 'Aeroporto de Porto Seguro',
           meta: 'Cerca de 1h15min de carro pela BA-987.',
           route: 'M900 1250 Q 1030 1210 1110 1000 Q 1190 740 1150 540', mid: [1110, 930],
@@ -2697,8 +2919,16 @@
       var pins = {};
       [].forEach.call(canvas.querySelectorAll('.pin'), function (p) { pins[p.dataset.pin] = p; });
 
+      // no mobile (tela estreita) usamos um "mundo" maior/menor por ponto,
+      // para nada ficar cortado e os pontos distantes não sumirem
+      function worldFor(st) {
+        var m = window.matchMedia('(max-width: 760px)').matches;
+        if (!m) return st.world;
+        return st.mWorld || st.world * 1.18;
+      }
+
       var i = 0;
-      var cur = { x: steps[0].focus[0], y: steps[0].focus[1], w: steps[0].world };
+      var cur = { x: steps[0].focus[0], y: steps[0].focus[1], w: worldFor(steps[0]) };
       var tgt = { x: cur.x, y: cur.y, w: cur.w };
       var raf = null;
 
@@ -2750,7 +2980,7 @@
       }
 
       function animateTo(st) {
-        tgt.x = st.focus[0]; tgt.y = st.focus[1]; tgt.w = st.world;
+        tgt.x = st.focus[0]; tgt.y = st.focus[1]; tgt.w = worldFor(st);
         if (reduce) { cur.x = tgt.x; cur.y = tgt.y; cur.w = tgt.w; render(); return; }
         if (!raf) raf = requestAnimationFrame(frame);
       }
@@ -2822,7 +3052,11 @@
         else if (e.key === 'ArrowLeft') { firstInteract(); go(i - 1); }
       });
 
-      window.addEventListener('resize', render, { passive: true });
+      window.addEventListener('resize', function () {
+        // re-enquadra o ponto atual (o "mundo" muda entre mobile e desktop)
+        cur.w = tgt.w = worldFor(steps[i]);
+        render();
+      }, { passive: true });
 
       render();
       go(0);
