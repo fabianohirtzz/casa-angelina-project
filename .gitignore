@@ -3,6 +3,9 @@
 qa-*.jpeg
 qa-*.png
 
+# Prints de avaliações — só na máquina local, não vão para git/hospedagem
+images/avaliacoes/
+
 # Deploy (helper local)
 .ftphost
 

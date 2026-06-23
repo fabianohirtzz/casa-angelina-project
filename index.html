@@ -501,7 +501,7 @@
       height: 100vh;
       overflow: hidden;
       background: transparent;          /* revela o vídeo de fundo */
-      padding: 30px;
+      padding: 15px;
     }
 
     /* Moldura 3x3: gap + padding da .ambientes__sticky = folga uniforme.
@@ -511,7 +511,7 @@
       height: 100%;
       grid-template-columns: 1fr 1.5fr 1fr;
       grid-template-rows: 1fr 1.3fr 1fr;
-      gap: 30px;
+      gap: 15px;
     }
 
     /* Tiles da galeria. O JS aplica o transform (afastamento do centro +
@@ -793,9 +793,13 @@
        ============================================================ */
     .pacotes {
       background: transparent;          /* revela o vídeo de fundo */
-      padding: clamp(20px, 3vh, 48px) var(--gutter) clamp(80px, 13vh, 140px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(40px, 9vh, 96px) var(--gutter);
     }
-    .pacotes__inner { max-width: var(--container); margin-inline: auto; }
+    .pacotes__inner { width: 100%; max-width: var(--container); margin-inline: auto; }
 
     /* Cabeçalho da seção dentro da coluna de texto, acima do pacote.
        Alinhado à esquerda (centralizado no mobile). */
@@ -955,29 +959,32 @@
       position: absolute;
       inset: 0;
       z-index: -2;
-      background: url("images/footer.jpg") center/cover no-repeat;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       transform: scale(1.06);
     }
     .site-footer__scrim {
       position: absolute;
       inset: 0;
       z-index: -1;
+      /* mesmo véu creme das seções com vídeo de fundo (.band-video__scrim) */
       background:
-        linear-gradient(180deg, rgba(20, 28, 12, 0.40) 0%, rgba(20, 28, 12, 0.10) 32%, rgba(20, 28, 12, 0.55) 100%),
-        radial-gradient(130% 100% at 50% 36%, rgba(47, 61, 28, 0) 38%, rgba(47, 61, 28, 0.46) 100%);
+        linear-gradient(180deg, rgba(245, 239, 228, 0.82) 0%, rgba(245, 239, 228, 0.72) 45%, rgba(245, 239, 228, 0.84) 100%);
     }
 
-    /* O cartão impresso (a "foto" pendurada) */
+    /* O cartão impresso (a "foto" pendurada) — banda âncora em verde escuro */
     .footer-card {
       position: relative;
       width: min(var(--container), 100%);
-      background: linear-gradient(180deg, var(--off-white) 0%, #f2ebdc 100%);
+      background: linear-gradient(165deg, var(--verde-escuro) 0%, #4a652b 52%, var(--verde-profundo) 100%);
+      color: var(--creme-sobre-escuro);
       border-radius: 16px;
       padding: clamp(34px, 4.4vw, 58px) clamp(24px, 4vw, 60px) clamp(24px, 3vw, 38px);
       box-shadow:
-        0 44px 90px rgba(20, 28, 12, 0.40),
-        0 0 0 1px rgba(255, 255, 255, 0.6) inset,
-        0 0 0 8px rgba(255, 255, 255, 0.28);
+        0 44px 90px rgba(20, 28, 12, 0.46),
+        0 0 0 1px rgba(208, 240, 170, 0.14) inset,
+        0 0 0 8px rgba(251, 249, 244, 0.18);
       transform: rotate(-0.6deg);
       opacity: 0;
       transition: opacity .9s var(--ease-out), transform .9s var(--ease-out);
@@ -996,10 +1003,10 @@
       height: 38px;
       z-index: 4;
       background:
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 1px, rgba(255, 255, 255, 0) 1px 7px),
-        linear-gradient(180deg, rgba(208, 240, 170, 0.82) 0%, rgba(124, 167, 74, 0.66) 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.5);
-      border-bottom: 1px solid rgba(86, 115, 50, 0.4);
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0 1px, rgba(255, 255, 255, 0) 1px 7px),
+        linear-gradient(180deg, rgba(227, 245, 203, 0.92) 0%, rgba(208, 240, 170, 0.78) 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      border-bottom: 1px solid rgba(47, 61, 28, 0.4);
       box-shadow: 0 8px 16px rgba(20, 28, 12, 0.22);
       backdrop-filter: blur(2px) saturate(1.15);
       -webkit-backdrop-filter: blur(2px) saturate(1.15);
@@ -1029,8 +1036,8 @@
       width: 70px;
       height: auto;
       margin: 0 auto 26px;
-      color: var(--verde-escuro);
-      opacity: 0.7;
+      color: var(--verde-claro);
+      opacity: 0.75;
     }
 
     .footer-top {
@@ -1041,13 +1048,13 @@
     }
 
     .footer-brand__head { display: flex; align-items: center; gap: 14px; }
-    .footer-brand__logo { width: 58px; height: 58px; border-radius: 50%; }
+    .footer-brand__logo { width: 58px; height: 58px; }
     .footer-brand__name {
       font-family: var(--font-display);
       font-weight: 500;
       font-size: clamp(26px, 3vw, 34px);
       line-height: 1;
-      color: var(--verde-escuro);
+      color: var(--off-white);
     }
     .footer-brand__tagline {
       font-family: var(--font-display);
@@ -1055,7 +1062,7 @@
       font-weight: 400;
       font-size: clamp(17px, 1.9vw, 21px);
       line-height: 1.45;
-      color: var(--tinta-suave);
+      color: rgba(241, 236, 223, 0.78);
       margin-top: 16px;
       max-width: 30ch;
     }
@@ -1066,23 +1073,33 @@
       display: grid;
       gap: 7px;
       font-size: 14px;
-      color: var(--tinta-suave);
+      color: rgba(241, 236, 223, 0.78);
     }
-    .footer-brand__contact a { color: var(--tinta-suave); text-decoration: none; transition: color .2s var(--ease-soft); }
-    .footer-brand__contact a:hover { color: var(--verde-escuro); }
+    .footer-brand__contact a { color: rgba(241, 236, 223, 0.78); text-decoration: none; transition: color .2s var(--ease-soft); }
+    .footer-brand__contact a:hover { color: var(--verde-claro); }
 
     .footer-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
     .footer-actions .btn { padding: 12px 22px; font-size: 11.5px; }
+    /* Botões sobre a banda escura: primário em verde claro, secundário em contorno claro */
+    .footer-actions .btn--primary { background: var(--verde-claro); color: var(--verde-profundo); box-shadow: 0 10px 26px rgba(20, 28, 12, 0.4); }
+    .footer-actions .btn--primary:hover { background: var(--verde-claro-soft); box-shadow: 0 14px 32px rgba(20, 28, 12, 0.46); }
+    .footer-actions .btn--soft {
+      background: rgba(241, 236, 223, 0.08);
+      color: var(--creme-sobre-escuro);
+      border-color: rgba(208, 240, 170, 0.5);
+      box-shadow: none;
+    }
+    .footer-actions .btn--soft:hover { background: rgba(208, 240, 170, 0.16); border-color: var(--verde-claro); }
 
     .footer-social { display: flex; gap: 10px; margin-top: 18px; }
     .footer-social a {
       width: 42px; height: 42px; border-radius: 50%;
       display: grid; place-items: center;
-      color: var(--verde-escuro);
-      border: 1px solid var(--verde-linha);
+      color: var(--verde-claro);
+      border: 1px solid rgba(208, 240, 170, 0.34);
       transition: background .2s var(--ease-soft), color .2s var(--ease-soft), transform .2s var(--ease-out);
     }
-    .footer-social a:hover { background: var(--verde-escuro); color: var(--off-white); transform: translateY(-2px); }
+    .footer-social a:hover { background: var(--verde-claro); color: var(--verde-profundo); transform: translateY(-2px); }
     .footer-social svg { width: 19px; height: 19px; fill: currentColor; }
 
     /* Colunas de links */
@@ -1098,26 +1115,26 @@
       font-weight: 500;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--verde-escuro);
+      color: var(--verde-claro);
     }
     .footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
     .footer-col a {
       font-size: 14.5px;
-      color: var(--tinta-suave);
+      color: rgba(241, 236, 223, 0.8);
       text-decoration: none;
       transition: color .2s var(--ease-soft), padding-left .2s var(--ease-out);
     }
-    .footer-col a:hover { color: var(--verde-escuro); padding-left: 4px; }
-    .footer-col__muted { font-size: 14.5px; color: var(--tinta-dim); }
+    .footer-col a:hover { color: var(--verde-claro); padding-left: 4px; }
+    .footer-col__muted { font-size: 14.5px; color: rgba(241, 236, 223, 0.5); }
     .footer-col__muted span { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
     /* "Também em": OTAs discretas, secundárias à reserva direta */
     .footer-col__sublabel {
       margin: 20px 0 11px;
       font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--tinta-dim);
+      color: rgba(241, 236, 223, 0.5);
     }
-    .footer-col__alt a, .footer-col__alt .footer-col__muted { font-size: 13.5px; color: var(--tinta-dim); }
-    .footer-col__alt a:hover { color: var(--verde-escuro); }
+    .footer-col__alt a, .footer-col__alt .footer-col__muted { font-size: 13.5px; color: rgba(241, 236, 223, 0.55); }
+    .footer-col__alt a:hover { color: var(--verde-claro); }
 
     /* Barra inferior */
     .footer-bottom {
@@ -1128,12 +1145,12 @@
       gap: 12px;
       margin-top: clamp(28px, 3.4vw, 44px);
       padding-top: 22px;
-      border-top: 1px solid var(--verde-linha);
+      border-top: 1px solid rgba(208, 240, 170, 0.18);
       font-size: 13px;
-      color: var(--tinta-dim);
+      color: rgba(241, 236, 223, 0.5);
     }
-    .footer-bottom a { color: var(--tinta-suave); text-decoration: none; }
-    .footer-bottom a:hover { color: var(--verde-escuro); }
+    .footer-bottom a { color: rgba(241, 236, 223, 0.7); text-decoration: none; }
+    .footer-bottom a:hover { color: var(--verde-claro); }
 
     @media (max-width: 860px) {
       .footer-top { grid-template-columns: 1fr; gap: 34px; }
@@ -1496,6 +1513,164 @@
     @media (prefers-reduced-motion: reduce) {
       .pin__pulse { animation: none; display: none; }
       .mapa__canvas { transition: none; }
+    }
+
+    /* ============================================================
+       AVALIAÇÕES — banda verde escuro com carrossel "stagger" de
+       depoimentos (port vanilla do stagger-testimonials). Cards creme
+       fanados em 3D; o ativo vem à frente. Renderizado por JS.
+       ============================================================ */
+    .avaliacoes {
+      position: relative;
+      background: var(--verde-profundo);
+      color: var(--creme-sobre-escuro);
+      padding: clamp(64px, 11vh, 120px) var(--gutter) clamp(72px, 12vh, 130px);
+      overflow: hidden;
+    }
+    .avaliacoes::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(120% 80% at 50% -10%, rgba(208, 240, 170, 0.10) 0%, rgba(208, 240, 170, 0) 55%),
+        radial-gradient(90% 70% at 50% 120%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 60%);
+      pointer-events: none;
+    }
+
+    .avaliacoes__head {
+      position: relative;
+      max-width: var(--container);
+      margin: 0 auto clamp(34px, 5vh, 56px);
+      text-align: center;
+    }
+    .avaliacoes__eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde-claro); margin-bottom: 14px;
+    }
+    .avaliacoes__eyebrow-rule { display: block; width: 30px; height: 1px; background: var(--verde-claro); opacity: 0.6; }
+    .avaliacoes__title {
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(32px, 5vw, 60px); line-height: 1.04; color: var(--off-white);
+    }
+    .avaliacoes__title em { font-style: italic; color: var(--verde-claro); }
+
+    /* Selo da nota geral */
+    .avaliacoes__score {
+      display: inline-flex; align-items: center; gap: 14px;
+      margin-top: 22px; padding: 12px 22px;
+      border: 1px solid rgba(208, 240, 170, 0.28);
+      border-radius: var(--r-pill);
+      background: rgba(208, 240, 170, 0.06);
+    }
+    .avaliacoes__score-num {
+      font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1;
+      color: var(--verde-claro);
+    }
+    .avaliacoes__score-text {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+      font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(241, 236, 223, 0.78); line-height: 1.2;
+    }
+
+    /* Estrelas (overlay de preenchimento por porcentagem) */
+    .stars {
+      position: relative; display: inline-block; white-space: nowrap;
+      font-size: 1em; line-height: 1; letter-spacing: 2px;
+    }
+    .stars__base, .stars__fill { display: block; }
+    .stars__base { color: rgba(86, 115, 50, 0.22); }
+    .stars__fill {
+      position: absolute; top: 0; left: 0; overflow: hidden;
+      color: var(--verde-escuro); width: 0;
+    }
+    .avaliacoes__score .stars { font-size: 14px; }
+    .avaliacoes__score .stars__base { color: rgba(208, 240, 170, 0.28); }
+    .avaliacoes__score .stars__fill { color: var(--verde-claro); }
+
+    /* Palco 3D dos cards */
+    .aval-stage {
+      position: relative;
+      max-width: var(--container);
+      margin: 0 auto;
+      height: clamp(440px, 58vh, 540px);
+      perspective: 1400px;
+    }
+    .aval-card {
+      position: absolute; top: 50%; left: 50%;
+      width: min(540px, 88%);
+      padding: clamp(28px, 3.4vw, 40px) clamp(26px, 3.2vw, 40px) clamp(24px, 3vw, 34px);
+      background: var(--creme);
+      border-radius: var(--r-lg);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.34);
+      transform: translate(-50%, -50%);
+      transform-origin: center center;
+      transition: transform .6s var(--ease-out), opacity .6s var(--ease-out);
+      will-change: transform, opacity;
+      display: flex; flex-direction: column;
+    }
+    .aval-card[data-active="true"] { cursor: default; }
+    .aval-card[data-active="false"] { cursor: pointer; }
+
+    .aval-card__stars { font-size: 17px; margin-bottom: 16px; }
+    .aval-card__title {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(22px, 2.6vw, 30px); line-height: 1.12; color: var(--verde-escuro);
+      margin-bottom: 12px;
+    }
+    .aval-card__text {
+      font-size: clamp(14.5px, 1.5vw, 16px); line-height: 1.66; color: var(--tinta-suave);
+      margin: 0 0 auto;
+    }
+    .aval-card__foot {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--verde-linha);
+    }
+    .aval-card__avatar {
+      flex: none; width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--verde-claro); color: var(--verde-profundo);
+      font-family: var(--font-display); font-weight: 600; font-size: 22px;
+    }
+    .aval-card__who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .aval-card__name {
+      font-family: var(--font-display); font-weight: 600; font-size: 19px;
+      color: var(--tinta); line-height: 1.1;
+    }
+    .aval-card__meta {
+      font-size: 11.5px; letter-spacing: 0.06em; color: var(--tinta-dim);
+      text-transform: uppercase;
+    }
+
+    /* Controles */
+    .aval-controls {
+      position: relative;
+      display: flex; align-items: center; justify-content: center; gap: 20px;
+      margin-top: clamp(28px, 4vh, 44px);
+    }
+    .aval-arrow {
+      width: 50px; height: 50px; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer;
+      background: transparent; color: var(--verde-claro);
+      border: 1px solid rgba(208, 240, 170, 0.34);
+      transition: background .2s var(--ease-soft), color .2s var(--ease-soft),
+                  transform .2s var(--ease-out), border-color .2s var(--ease-soft);
+    }
+    .aval-arrow:hover {
+      background: var(--verde-claro); color: var(--verde-profundo);
+      border-color: var(--verde-claro); transform: translateY(-2px);
+    }
+    .aval-arrow svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .aval-counter {
+      font-family: var(--font-body); font-size: 13px; letter-spacing: 0.14em;
+      color: rgba(241, 236, 223, 0.6); min-width: 64px; text-align: center;
+    }
+    .aval-counter b { color: var(--verde-claro); font-weight: 500; }
+
+    @media (max-width: 760px) {
+      .aval-stage { height: clamp(460px, 64vh, 560px); }
+      .aval-card { width: min(420px, 90%); }
+      .aval-card__text { font-size: 14.5px; }
     }
   </style>
 </head>
@@ -1961,9 +2136,49 @@
     </div>
   </section>
 
+  <!-- ===================== AVALIAÇÕES — carrossel stagger de depoimentos =====================
+       Os depoimentos são montados por JS a partir de um array (ver script "AVALIAÇÕES").
+       Cards creme fanados em 3D sobre a banda verde escuro; o card ativo vem à frente.
+       ============================================================ -->
+  <section class="avaliacoes" id="avaliacoes" aria-label="Avaliações de hóspedes">
+    <header class="avaliacoes__head reveal">
+      <p class="avaliacoes__eyebrow">
+        <span class="avaliacoes__eyebrow-rule" aria-hidden="true"></span>
+        Quem já ficou
+        <span class="avaliacoes__eyebrow-rule" aria-hidden="true"></span>
+      </p>
+      <h2 class="avaliacoes__title"><em>Bem avaliada</em> por quem chega</h2>
+      <div class="avaliacoes__score">
+        <span class="avaliacoes__score-num">9,6</span>
+        <span class="stars" aria-hidden="true">
+          <span class="stars__base">★★★★★</span>
+          <span class="stars__fill" style="width: 96%">★★★★★</span>
+        </span>
+        <span class="avaliacoes__score-text">
+          <span>Nota geral</span>
+          <span>dos hóspedes</span>
+        </span>
+      </div>
+    </header>
+
+    <div class="aval-stage reveal" id="avalStage" aria-live="polite"></div>
+
+    <div class="aval-controls reveal">
+      <button class="aval-arrow" id="avalPrev" type="button" aria-label="Avaliação anterior">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <span class="aval-counter"><b id="avalNow">01</b>&nbsp;/&nbsp;<span id="avalTotal">10</span></span>
+      <button class="aval-arrow" id="avalNext" type="button" aria-label="Próxima avaliação">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </section>
+
   <!-- ===================== RODAPÉ ===================== -->
   <footer class="site-footer" id="rodape">
-    <div class="site-footer__bg" aria-hidden="true"></div>
+    <video class="site-footer__bg" autoplay muted loop playsinline poster="images/footer.jpg" aria-hidden="true">
+      <source src="videos/video-footer.mp4" type="video/mp4" />
+    </video>
     <div class="site-footer__scrim" aria-hidden="true"></div>
 
     <div class="footer-card">
@@ -1981,7 +2196,7 @@
         <!-- Marca -->
         <div class="footer-brand">
           <a class="footer-brand__head" href="#topo" aria-label="Casa Angelina, voltar ao topo">
-            <img class="footer-brand__logo" src="images/logo.png" alt="Casa Angelina Trancoso" width="58" height="58" />
+            <img class="footer-brand__logo" src="images/logo-branco-transparente.png" alt="Casa Angelina Trancoso" width="58" height="58" />
             <span class="footer-brand__name">Casa Angelina</span>
           </a>
           <p class="footer-brand__tagline">Do quarto à casa inteira, no ritmo de Trancoso.</p>
@@ -2592,6 +2807,175 @@
 
       render();
       go(0);
+    })();
+
+    /* ===== AVALIAÇÕES — carrossel "stagger" de depoimentos ===== */
+    (function () {
+      var stage = document.getElementById('avalStage');
+      if (!stage) return;
+
+      // Avaliações reais de hóspedes. "stars" é a nota convertida para 5
+      // (nota 10 = 5, nota 9 = 4,5). Textos editados para tirar emojis e
+      // travessões, mantendo as palavras dos hóspedes.
+      var AVALIACOES = [
+        {
+          name: 'Bárbara', initial: 'B', stars: 5,
+          meta: 'Quarto Duplo · Casal · fevereiro 2025',
+          title: 'Excepcional',
+          text: 'A pousada é mais que perfeita. Eu me senti passando um final de semana na casa de amigos próximos. A recepção dos anfitriões é absurdamente aconchegante, e cada detalhe você vê que é pensado com carinho. De carro são uns 8 minutos até o Quadrado, e a natureza que envolve a pousada é magnífica.'
+        },
+        {
+          name: 'Gustavo', initial: 'G', stars: 5,
+          meta: 'Quarto Triplo · Família · julho 2025',
+          title: 'Tudo de bom',
+          text: 'A pousada é excelente em todos os aspectos. Os quartos são muito limpos, bem cuidados e confortáveis. O café da manhã é delicioso, variado e feito com carinho. Mas o grande diferencial são os anfitriões, nota 1000. Uma experiência acolhedora do início ao fim. Recomendo demais e com certeza voltaria.'
+        },
+        {
+          name: 'Luhanna', initial: 'L', stars: 5,
+          meta: 'Quarto Duplo · Casal · março 2025',
+          title: 'Conforto, natureza e acolhimento',
+          text: 'A pousada é muito relaxante. A área da piscina, as redes, tudo contribui para uma estadia confortável. Os anfitriões nos deixaram muito à vontade, nos sentíamos em casa. Despertou em nós a vontade de retornar para o mesmo lugar quando estivermos em Trancoso.'
+        },
+        {
+          name: 'Alexandre', initial: 'A', stars: 5,
+          meta: 'Quarto Superior King · Casal · dezembro 2025',
+          title: 'Vontade de não ir embora',
+          text: 'Tudo ótimo. As instalações são fiéis às fotos. Os anfitriões foram super atenciosos e educados, Hortência e Manoel são muito agradáveis. Café da manhã delicioso e variado, ótima cama e travesseiros. O lugar é muito silencioso e arborizado. Tudo perfeito.'
+        },
+        {
+          name: 'Laise', initial: 'L', stars: 5,
+          meta: 'Quarto Duplo · Casal · março 2025',
+          title: 'Maravilhosa',
+          text: 'Lugar incrível. A pousada é muito aconchegante, um refúgio em meio à natureza. Os proprietários nos recebem como se fosse na casa deles. Percebemos o cuidado em todos os detalhes, desde a limpeza do quarto até o café da manhã personalizado e delicioso. Saímos com vontade de ficar.'
+        },
+        {
+          name: 'Monique', initial: 'M', stars: 5,
+          meta: 'Quarto Triplo · Viajante individual · novembro 2025',
+          title: 'Incrível',
+          text: 'Amei muito tudo, pousada excelente. Anfitriões super gentis e solícitos, foi incrível a minha estadia. Quarto perfeito, café da manhã magnífico. Não vejo a hora de voltar.'
+        },
+        {
+          name: 'Ricardo', initial: 'R', stars: 5,
+          meta: 'Quarto Superior King · Casal · dezembro 2025',
+          title: 'Dias maravilhosos para guardar na memória',
+          text: 'Nossa hospedagem atendeu todas as expectativas. As acomodações são ótimas e aconchegantes, com linda paisagem, área de reserva nativa e piscina. Foi uma ótima escolha para nossos dias em Trancoso. Agradeço à Hortência, Manoel e toda equipe pela recepção, todos muito simpáticos e atenciosos.'
+        },
+        {
+          name: 'Sacha', initial: 'S', stars: 4.5,
+          meta: 'Quarto Duplo · Família · julho 2025',
+          title: 'Café delicioso e lugar lindo',
+          text: 'Os anfitriões são muito atenciosos e gentis, nos deram várias dicas de passeios. A decoração é muito linda e o visual da piscina e da mata é muito bonito. O café estava delicioso, com cardápio variado e preparado com muito carinho. A propriedade fica próxima à mata, dando a sensação de muita tranquilidade.'
+        },
+        {
+          name: 'Ohara', initial: 'O', stars: 4.5,
+          meta: 'Quarto Superior King · Grupo · agosto 2025',
+          title: 'Um espaço esplêndido, natureza incrível',
+          text: 'O pleno contato com a natureza, os macacos prego visitando a pousada, a cama extremamente confortável e o café da manhã divino, com ovos mexidos e tapiocas preparados na hora, com muitas variedades deliciosas.'
+        },
+        {
+          name: 'Vinicius', initial: 'V', stars: 4.5,
+          meta: 'Quarto Superior King · Casal · agosto 2025',
+          title: 'Estadia incrível, gerentes acessíveis',
+          text: 'Achamos tudo muito bom. O hotel é no meio da natureza, havia animais exóticos e um clima de relaxamento muito bom. A equipe muito simpática e solícita. Os administradores foram sempre muito queridos e flexíveis, sempre acessíveis e nos auxiliando em tudo.'
+        }
+      ];
+
+      var prevBtn = document.getElementById('avalPrev');
+      var nextBtn = document.getElementById('avalNext');
+      var nowEl = document.getElementById('avalNow');
+      var totalEl = document.getElementById('avalTotal');
+      var n = AVALIACOES.length;
+      var active = 0;
+
+      function pad(x) { return (x < 10 ? '0' : '') + x; }
+      function starsHTML(v) {
+        var pct = (v / 5) * 100;
+        return '<span class="stars" aria-hidden="true">' +
+          '<span class="stars__base">★★★★★</span>' +
+          '<span class="stars__fill" style="width:' + pct + '%">★★★★★</span>' +
+          '</span>';
+      }
+
+      // Monta os cards uma vez
+      var cards = AVALIACOES.map(function (a, idx) {
+        var el = document.createElement('article');
+        el.className = 'aval-card';
+        el.innerHTML =
+          '<span class="aval-card__stars">' + starsHTML(a.stars) + '</span>' +
+          '<h3 class="aval-card__title">' + a.title + '</h3>' +
+          '<p class="aval-card__text">' + a.text + '</p>' +
+          '<footer class="aval-card__foot">' +
+            '<span class="aval-card__avatar" aria-hidden="true">' + a.initial + '</span>' +
+            '<span class="aval-card__who">' +
+              '<span class="aval-card__name">' + a.name + '</span>' +
+              '<span class="aval-card__meta">' + a.meta + '</span>' +
+            '</span>' +
+          '</footer>';
+        el.addEventListener('click', function () { if (idx !== active) go(idx); });
+        stage.appendChild(el);
+        return el;
+      });
+
+      totalEl.textContent = pad(n);
+
+      function layout() {
+        var narrow = window.innerWidth < 760;
+        var maxVisible = narrow ? 1 : 2;
+        var spread = narrow ? stage.clientWidth * 0.5 : Math.min(360, stage.clientWidth * 0.42);
+        var rot = narrow ? 32 : 42;
+
+        cards.forEach(function (el, idx) {
+          // deslocamento circular mais curto (-n/2 .. n/2)
+          var off = idx - active;
+          if (off > n / 2) off -= n;
+          if (off < -n / 2) off += n;
+          var abs = Math.abs(off);
+          var visible = abs <= maxVisible;
+          var lift = off === 0 ? 0 : (off % 2 ? -10 : 10);
+
+          el.style.transform =
+            'translate(-50%, -50%)' +
+            ' translateX(' + (off * spread) + 'px)' +
+            ' translateY(' + lift + 'px)' +
+            ' translateZ(' + (-abs * 150) + 'px)' +
+            ' rotateY(' + (off * -rot) + 'deg)' +
+            ' scale(' + (off === 0 ? 1 : 0.94) + ')';
+          el.style.opacity = visible ? (off === 0 ? 1 : 0.78) : 0;
+          el.style.zIndex = String(100 - abs);
+          el.style.pointerEvents = visible && off !== 0 ? 'auto' : (off === 0 ? 'none' : 'none');
+          el.setAttribute('data-active', off === 0 ? 'true' : 'false');
+        });
+        nowEl.textContent = pad(active + 1);
+      }
+
+      function go(idx) {
+        active = (idx + n) % n;
+        layout();
+      }
+
+      nextBtn.addEventListener('click', function () { go(active + 1); });
+      prevBtn.addEventListener('click', function () { go(active - 1); });
+
+      window.addEventListener('keydown', function (e) {
+        var r = stage.getBoundingClientRect();
+        var vis = r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25;
+        if (!vis) return;
+        if (e.key === 'ArrowRight') go(active + 1);
+        else if (e.key === 'ArrowLeft') go(active - 1);
+      });
+
+      // Swipe no toque
+      var x0 = null;
+      stage.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+      stage.addEventListener('touchend', function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 44) { dx < 0 ? go(active + 1) : go(active - 1); }
+        x0 = null;
+      }, { passive: true });
+
+      window.addEventListener('resize', layout, { passive: true });
+      layout();
     })();
   </script>
 </body>
