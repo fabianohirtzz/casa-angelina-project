@@ -514,11 +514,12 @@
       gap: 30px;
     }
 
-    /* Tiles da galeria. Sem cantos arredondados; o JS aplica o transform
-       (afastamento do centro + zoom) ao rolar. */
+    /* Tiles da galeria. O JS aplica o transform (afastamento do centro +
+       zoom) ao rolar. */
     .zp__el {
       background-size: cover;
       background-position: center;
+      border-radius: var(--r-lg);
       box-shadow: 0 14px 36px rgba(43, 51, 32, 0.14);
       will-change: transform;
     }
@@ -639,10 +640,10 @@
     }
 
     /* ============================================================
-       DUAS FORMAS DE FICAR — sticky stacking cards (sem cantos)
+       DUAS FORMAS DE FICAR — sticky stacking cards
        Três cartões que empilham ao rolar: 1) banda verde de intro,
        2) casa inteira (foto) e 3) quartos (foto), cada foto com CTA
-       "Reserve agora". Sem nenhum canto arredondado nesta seção.
+       "Reserve agora".
        ============================================================ */
     .formas {
       background: transparent;          /* revela o vídeo de fundo */
@@ -669,7 +670,7 @@
       display: flex;
       overflow: hidden;
       min-height: clamp(460px, 78vh, 740px);
-      border-radius: 0;                 /* sem cantos arredondados */
+      border-radius: var(--r-lg);
       box-shadow: 0 24px 60px rgba(20, 28, 12, 0.22);
       transform-origin: center top;     /* o JS reduz a escala ao ser coberto */
       will-change: transform;
@@ -770,8 +771,7 @@
               mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'%3E%3Cpath d='M0 4c4-4 8-4 16 0-8 4-12 4-16 0z'/%3E%3C/svg%3E") center/contain no-repeat;
     }
 
-    /* CTA "Reserve agora" — mantém o pill padrão (igual aos botões do header);
-       só os cartões/imagens é que ficam sem canto arredondado nesta seção */
+    /* CTA "Reserve agora" — mantém o pill padrão (igual aos botões do header) */
     .forma__cta { margin-top: 28px; }
 
     @media (max-width: 760px) {
@@ -797,22 +797,24 @@
     }
     .pacotes__inner { max-width: var(--container); margin-inline: auto; }
 
-    .pacotes__head { max-width: 720px; margin: 0 auto clamp(34px, 5vw, 58px); text-align: center; }
+    /* Cabeçalho da seção dentro da coluna de texto, acima do pacote.
+       Alinhado à esquerda (centralizado no mobile). */
+    .pacotes__head { max-width: none; margin: 0 0 22px; text-align: left; }
     .pacotes__eyebrow {
       display: inline-flex; align-items: center; gap: 12px;
       font-size: 12px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--verde-escuro); margin-bottom: 16px;
+      color: var(--verde-escuro); margin-bottom: 14px;
     }
     .pacotes__eyebrow-rule { display: block; width: 30px; height: 1px; background: var(--verde-escuro); opacity: 0.5; }
     .pacotes__title {
       font-family: var(--font-display); font-weight: 400;
-      font-size: clamp(34px, 5.4vw, 66px); line-height: 1.04; color: var(--tinta);
+      font-size: clamp(30px, 3.6vw, 48px); line-height: 1.04; color: var(--tinta);
     }
     .pacotes__title em { font-style: italic; color: var(--verde-escuro); }
     .pacotes__lede {
       font-family: var(--font-display); font-style: italic; font-weight: 400;
-      font-size: clamp(17px, 2vw, 22px); line-height: 1.5; color: var(--tinta-suave);
-      max-width: 52ch; margin: 12px auto 0;
+      font-size: clamp(16px, 1.7vw, 20px); line-height: 1.5; color: var(--tinta-suave);
+      max-width: 46ch; margin: 12px 0 0;
     }
 
     .pacotes__carousel {
@@ -840,10 +842,12 @@
     .pacotes:not([data-single="true"]) .pac__photo { cursor: pointer; }
 
     /* Lado do texto */
-    .pac__content { max-width: 460px; }
+    .pac__content { max-width: 520px; }
     .pac__name {
       font-family: var(--font-display); font-weight: 500;
       font-size: clamp(28px, 3.4vw, 42px); line-height: 1.08; color: var(--verde-escuro);
+      /* fio fino separando o intro da seção do pacote específico */
+      margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--verde-linha);
     }
     .pac__price {
       font-family: var(--font-body); font-size: 12px; font-weight: 500;
@@ -1711,21 +1715,21 @@
        seção some do site; com 1 ou mais ela aparece automaticamente. -->
   <section class="pacotes" id="pacotes" aria-label="Pacotes e experiências da Casa Angelina">
     <div class="pacotes__inner">
-      <header class="pacotes__head reveal">
-        <p class="pacotes__eyebrow">
-          <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
-          Pacotes
-          <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
-        </p>
-        <h2 class="pacotes__title"><em>Experiências</em> sob medida</h2>
-        <p class="pacotes__lede">Some um toque especial à sua estadia, da decoração romântica à celebração entre a mata e a piscina.</p>
-      </header>
-
       <div class="pacotes__carousel reveal">
         <!-- pilha de fotos (preenchida por JS) -->
         <div class="pac__stack" id="pacStack" aria-live="polite"></div>
 
         <div class="pac__content">
+          <header class="pacotes__head">
+            <p class="pacotes__eyebrow">
+              <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
+              Pacotes
+              <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
+            </p>
+            <h2 class="pacotes__title"><em>Experiências</em> sob medida</h2>
+            <p class="pacotes__lede">Some um toque especial à sua estadia, da decoração romântica à celebração entre a mata e a piscina.</p>
+          </header>
+
           <h3 class="pac__name" id="pacName"></h3>
           <p class="pac__price" id="pacPrice"></p>
           <p class="pac__desc" id="pacDesc"></p>
