@@ -1047,7 +1047,7 @@
       align-items: start;
     }
 
-    .footer-brand__head { display: flex; align-items: center; gap: 14px; }
+    .footer-brand__head { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
     .footer-brand__logo { width: 58px; height: 58px; }
     .footer-brand__name {
       font-family: var(--font-display);
@@ -1090,6 +1090,18 @@
       box-shadow: none;
     }
     .footer-actions .btn--soft:hover { background: rgba(208, 240, 170, 0.16); border-color: var(--verde-claro); }
+
+    .footer-review {
+      display: inline-flex; align-items: center; gap: 9px;
+      margin-top: 16px;
+      font-family: var(--font-body);
+      font-size: 13px; letter-spacing: 0.02em;
+      color: rgba(241, 236, 223, 0.78);
+      text-decoration: none;
+      transition: color .2s var(--ease-soft);
+    }
+    .footer-review svg { width: 16px; height: 16px; fill: var(--verde-claro); transition: fill .2s var(--ease-soft); }
+    .footer-review:hover { color: var(--verde-claro); }
 
     .footer-social { display: flex; gap: 10px; margin-top: 18px; }
     .footer-social a {
@@ -2204,7 +2216,6 @@
           <ul class="footer-brand__contact">
             <li>Trancoso · Bahia</li>
             <li><a href="https://wa.me/5573999619953?text=Ol%C3%A1%21%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Casa%20Angelina." target="_blank" rel="noopener">+55 73 99961-9953</a></li>
-            <li><a href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener">@casangelinatrancoso</a></li>
           </ul>
 
           <div class="footer-actions">
@@ -2212,12 +2223,20 @@
             <a class="btn btn--soft" href="https://wa.me/5573999619953?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20sobre%20a%20Casa%20Angelina." target="_blank" rel="noopener">Tirar dúvidas</a>
           </div>
 
+          <a class="footer-review" href="https://maps.app.goo.gl/xPmw3ZJzQ5rBj1137" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <span>Nos avalie no Google</span>
+          </a>
+
           <div class="footer-social">
             <a href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener" aria-label="Instagram">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.06 1.8.25 2.2.42.6.22 1 .48 1.4.9.43.42.7.82.9 1.4.18.45.37 1.06.42 2.26.06 1.3.07 1.68.07 4.94s0 3.6-.07 4.9c-.05 1.2-.24 1.8-.42 2.26-.22.6-.48 1-.9 1.4-.42.43-.82.7-1.4.9-.45.18-1.06.37-2.26.42-1.3.06-1.68.07-4.94.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.24-2.26-.42-.6-.22-1-.48-1.4-.9-.43-.42-.7-.82-.9-1.4-.18-.45-.37-1.06-.42-2.26C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.24-1.8.42-2.26.22-.6.48-1 .9-1.4.42-.43.82-.7 1.4-.9.45-.18 1.06-.37 2.26-.42C8.4 2.21 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.5 0-4.74.07-.9.04-1.38.2-1.7.32-.43.17-.74.37-1.06.7-.32.31-.52.62-.7 1.05-.12.33-.28.81-.32 1.7C3.4 9.1 3.4 9.46 3.4 12s0 2.9.07 4.14c.04.9.2 1.38.32 1.7.17.44.37.74.7 1.06.31.32.62.52 1.05.7.33.12.81.28 1.7.32 1.25.06 1.6.07 4.75.07s3.5 0 4.74-.07c.9-.04 1.38-.2 1.7-.32.44-.17.74-.37 1.06-.7.32-.31.52-.62.7-1.05.12-.33.28-.81.32-1.7.06-1.25.07-1.6.07-4.15s0-2.9-.07-4.14c-.04-.9-.2-1.38-.32-1.7a2.85 2.85 0 0 0-.7-1.06 2.85 2.85 0 0 0-1.05-.7c-.33-.12-.81-.28-1.7-.32C15.5 4 15.15 4 12 4zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28zm5.14-.6a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3z"/></svg>
             </a>
             <a href="https://wa.me/5573999619953?text=Ol%C3%A1%21%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Casa%20Angelina." target="_blank" rel="noopener" aria-label="WhatsApp">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.93.5 3.78 1.46 5.42L2.1 22l4.85-1.27a9.8 9.8 0 0 0 4.7 1.2h.01c5.43 0 9.84-4.4 9.84-9.84S17.47 2 12.04 2zm0 17.9h-.01a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-2.88.76.77-2.81-.2-.31a8.06 8.06 0 0 1-1.24-4.31c0-4.49 3.66-8.14 8.16-8.14a8.1 8.1 0 0 1 8.13 8.15c0 4.49-3.66 8.14-8.15 8.14zm4.47-6.1c-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.97-.14.16-.29.18-.53.06-.24-.12-1.03-.38-1.97-1.21-.73-.65-1.22-1.45-1.36-1.7-.14-.24-.02-.37.1-.49.1-.1.25-.29.37-.43.12-.14.16-.24.24-.4.08-.17.04-.31-.02-.43-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42-.14 0-.3-.02-.47-.02a.9.9 0 0 0-.65.31c-.22.24-.85.84-.85 2.05s.87 2.38.99 2.54c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z"/></svg>
+            </a>
+            <a href="https://maps.app.goo.gl/xPmw3ZJzQ5rBj1137" target="_blank" rel="noopener" aria-label="Google Maps">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c-3.87 0-7 3.13-7 7 0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
             </a>
           </div>
         </div>
@@ -2820,61 +2839,61 @@
       var AVALIACOES = [
         {
           name: 'Bárbara', initial: 'B', stars: 5,
-          meta: 'Quarto Duplo · Casal · fevereiro 2025',
+          meta: 'Quarto Duplo · Casal',
           title: 'Excepcional',
           text: 'A pousada é mais que perfeita. Eu me senti passando um final de semana na casa de amigos próximos. A recepção dos anfitriões é absurdamente aconchegante, e cada detalhe você vê que é pensado com carinho. De carro são uns 8 minutos até o Quadrado, e a natureza que envolve a pousada é magnífica.'
         },
         {
           name: 'Gustavo', initial: 'G', stars: 5,
-          meta: 'Quarto Triplo · Família · julho 2025',
+          meta: 'Quarto Triplo · Família',
           title: 'Tudo de bom',
           text: 'A pousada é excelente em todos os aspectos. Os quartos são muito limpos, bem cuidados e confortáveis. O café da manhã é delicioso, variado e feito com carinho. Mas o grande diferencial são os anfitriões, nota 1000. Uma experiência acolhedora do início ao fim. Recomendo demais e com certeza voltaria.'
         },
         {
           name: 'Luhanna', initial: 'L', stars: 5,
-          meta: 'Quarto Duplo · Casal · março 2025',
+          meta: 'Quarto Duplo · Casal',
           title: 'Conforto, natureza e acolhimento',
           text: 'A pousada é muito relaxante. A área da piscina, as redes, tudo contribui para uma estadia confortável. Os anfitriões nos deixaram muito à vontade, nos sentíamos em casa. Despertou em nós a vontade de retornar para o mesmo lugar quando estivermos em Trancoso.'
         },
         {
           name: 'Alexandre', initial: 'A', stars: 5,
-          meta: 'Quarto Superior King · Casal · dezembro 2025',
+          meta: 'Quarto Superior King · Casal',
           title: 'Vontade de não ir embora',
           text: 'Tudo ótimo. As instalações são fiéis às fotos. Os anfitriões foram super atenciosos e educados, Hortência e Manoel são muito agradáveis. Café da manhã delicioso e variado, ótima cama e travesseiros. O lugar é muito silencioso e arborizado. Tudo perfeito.'
         },
         {
           name: 'Laise', initial: 'L', stars: 5,
-          meta: 'Quarto Duplo · Casal · março 2025',
+          meta: 'Quarto Duplo · Casal',
           title: 'Maravilhosa',
           text: 'Lugar incrível. A pousada é muito aconchegante, um refúgio em meio à natureza. Os proprietários nos recebem como se fosse na casa deles. Percebemos o cuidado em todos os detalhes, desde a limpeza do quarto até o café da manhã personalizado e delicioso. Saímos com vontade de ficar.'
         },
         {
           name: 'Monique', initial: 'M', stars: 5,
-          meta: 'Quarto Triplo · Viajante individual · novembro 2025',
+          meta: 'Quarto Triplo · Viajante individual',
           title: 'Incrível',
           text: 'Amei muito tudo, pousada excelente. Anfitriões super gentis e solícitos, foi incrível a minha estadia. Quarto perfeito, café da manhã magnífico. Não vejo a hora de voltar.'
         },
         {
           name: 'Ricardo', initial: 'R', stars: 5,
-          meta: 'Quarto Superior King · Casal · dezembro 2025',
+          meta: 'Quarto Superior King · Casal',
           title: 'Dias maravilhosos para guardar na memória',
           text: 'Nossa hospedagem atendeu todas as expectativas. As acomodações são ótimas e aconchegantes, com linda paisagem, área de reserva nativa e piscina. Foi uma ótima escolha para nossos dias em Trancoso. Agradeço à Hortência, Manoel e toda equipe pela recepção, todos muito simpáticos e atenciosos.'
         },
         {
           name: 'Sacha', initial: 'S', stars: 4.5,
-          meta: 'Quarto Duplo · Família · julho 2025',
+          meta: 'Quarto Duplo · Família',
           title: 'Café delicioso e lugar lindo',
           text: 'Os anfitriões são muito atenciosos e gentis, nos deram várias dicas de passeios. A decoração é muito linda e o visual da piscina e da mata é muito bonito. O café estava delicioso, com cardápio variado e preparado com muito carinho. A propriedade fica próxima à mata, dando a sensação de muita tranquilidade.'
         },
         {
           name: 'Ohara', initial: 'O', stars: 4.5,
-          meta: 'Quarto Superior King · Grupo · agosto 2025',
+          meta: 'Quarto Superior King · Grupo',
           title: 'Um espaço esplêndido, natureza incrível',
           text: 'O pleno contato com a natureza, os macacos prego visitando a pousada, a cama extremamente confortável e o café da manhã divino, com ovos mexidos e tapiocas preparados na hora, com muitas variedades deliciosas.'
         },
         {
           name: 'Vinicius', initial: 'V', stars: 4.5,
-          meta: 'Quarto Superior King · Casal · agosto 2025',
+          meta: 'Quarto Superior King · Casal',
           title: 'Estadia incrível, gerentes acessíveis',
           text: 'Achamos tudo muito bom. O hotel é no meio da natureza, havia animais exóticos e um clima de relaxamento muito bom. A equipe muito simpática e solícita. Os administradores foram sempre muito queridos e flexíveis, sempre acessíveis e nos auxiliando em tudo.'
         }

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo — Mapa de Trancoso (1.7)</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --verde-escuro: #567332;
+      --verde-claro: #d0f0aa;
+      --verde-profundo: #2f3d1c;
+      --verde-escuro-soft: #6f8f47;
+      --verde-claro-soft: #e3f5cb;
+      --verde-linha: rgba(86, 115, 50, 0.18);
+
+      --creme: #f5efe4;
+      --off-white: #fbf9f4;
+      --branco: #ffffff;
+      --areia: #e8ddca;
+
+      --tinta: #2b3320;
+      --tinta-suave: rgba(43, 51, 32, 0.68);
+      --tinta-dim: rgba(43, 51, 32, 0.46);
+      --creme-sobre-escuro: #f1ecdf;
+
+      --font-display: "Cormorant Garamond", "Times New Roman", serif;
+      --font-body: "Jost", "Helvetica Neue", system-ui, sans-serif;
+
+      --r-sm: 12px;
+      --r-md: 18px;
+      --r-lg: 24px;
+      --r-pill: 999px;
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      color: var(--tinta);
+      background: var(--creme);
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; }
+
+    /* faixas creme antes/depois (mostram a quebra: creme -> verde -> creme) */
+    .demo-band {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      background: var(--creme);
+      color: var(--tinta-suave);
+    }
+    .demo-band p { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 3vw, 30px); }
+
+    /* ============================================================
+       SEÇÃO TRANCOSO — banda verde escuro, mapa interativo (setas)
+       Altura da seção = 100vh; mapa "encaixotado" e largo.
+       ============================================================ */
+    .lugar {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(16px, 2.6vh, 30px);
+      padding: clamp(36px, 6vh, 64px) 0;
+      background: var(--verde-profundo);
+      color: var(--creme-sobre-escuro);
+      overflow: hidden;
+    }
+    /* textura botânica sutil ao fundo da banda verde */
+    .lugar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(120% 80% at 50% -10%, rgba(208, 240, 170, 0.10) 0%, rgba(208, 240, 170, 0) 55%),
+        radial-gradient(90% 70% at 50% 120%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 60%);
+      pointer-events: none;
+    }
+
+    /* placa de título (topo) */
+    .lugar__head {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 5vw, 56px);
+      text-align: center;
+    }
+    .lugar__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--verde-claro);
+      margin-bottom: 14px;
+    }
+    .lugar__eyebrow-rule { display: block; width: 30px; height: 1px; background: var(--verde-claro); opacity: 0.6; }
+    .lugar__title {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(32px, 5vw, 60px);
+      line-height: 1.04;
+      color: var(--off-white);
+    }
+    .lugar__title em { font-style: italic; color: var(--verde-claro); }
+    .lugar__lede {
+      font-size: clamp(14px, 1.5vw, 16.5px);
+      line-height: 1.65;
+      color: rgba(241, 236, 223, 0.82);
+      max-width: 62ch;
+      margin: 12px auto 0;
+    }
+
+    /* moldura do mapa (boxed, largo) */
+    .mapa-wrap {
+      position: relative;
+      width: 100%;
+      max-width: min(1460px, 92vw);
+      margin: 0 auto;
+      padding: 0 clamp(14px, 3vw, 30px);
+    }
+    .mapa {
+      position: relative;
+      height: clamp(360px, 60vh, 720px);
+      overflow: hidden;
+      border-radius: var(--r-lg);
+      background: #e8dcc0;
+      box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(208, 240, 170, 0.22),
+        0 0 0 8px rgba(255, 255, 255, 0.04);
+    }
+
+    /* a tela do mapa: tamanho fixo em px (1 unidade SVG = 1 px); o JS aplica
+       translate+scale para enquadrar cada ponto. transform-origin no canto. */
+    .mapa__canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 2400px;
+      height: 1600px;
+      transform-origin: 0 0;
+      will-change: transform;
+      --inv: 1;
+    }
+    .mapa__svg { position: absolute; inset: 0; width: 2400px; height: 1600px; }
+    .mapa__svg text {
+      font-family: var(--font-body);
+      fill: #a99a78;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    /* rota desenhada de Casa Angelina até o ponto */
+    .mapa__route {
+      fill: none;
+      stroke: var(--verde-escuro);
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+      opacity: 0;
+      filter: drop-shadow(0 2px 6px rgba(20, 28, 12, 0.45));
+    }
+
+    /* marcadores (HTML, contra-escalados — o JS limita o fator p/ não inflar) */
+    .pin {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(var(--inv));
+      transform-origin: center center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .pin__dot {
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--off-white);
+      color: var(--verde-escuro);
+      box-shadow: 0 8px 18px rgba(20, 28, 12, 0.32), 0 0 0 1px var(--verde-linha);
+      transition: transform .35s var(--ease-out), background .35s var(--ease-soft), color .35s var(--ease-soft);
+    }
+    .pin__dot svg { width: 56%; height: 56%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .pin__label {
+      margin-top: 7px;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      background: rgba(251, 249, 244, 0.95);
+      color: var(--verde-profundo);
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(20, 28, 12, 0.22);
+      opacity: 0;
+      transform: translateY(-3px);
+      transition: opacity .35s var(--ease-soft), transform .35s var(--ease-out);
+    }
+
+    /* ponto de interesse: apagado quando não é o passo ativo */
+    .pin--poi .pin__dot { width: 38px; height: 38px; }
+    .pin--poi { opacity: 0.36; filter: saturate(0.45); transition: opacity .4s var(--ease-soft), filter .4s var(--ease-soft); }
+    .pin--poi.is-active { opacity: 1; filter: none; z-index: 6; }
+    .pin--poi.is-active .pin__dot { background: var(--verde-escuro); color: var(--off-white); transform: scale(1.14); }
+    .pin--poi.is-active .pin__label { opacity: 1; transform: translateY(0); }
+
+    /* Casa Angelina: marcador-âncora, sempre destacado, com pulso */
+    .pin--home { z-index: 4; }
+    .pin--home .pin__dot {
+      width: 50px; height: 50px;
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      box-shadow: 0 12px 24px rgba(20, 28, 12, 0.4), 0 0 0 4px rgba(208, 240, 170, 0.5);
+    }
+    .pin--home .pin__label {
+      opacity: 1; transform: none;
+      background: var(--verde-profundo);
+      color: var(--creme-sobre-escuro);
+    }
+    .pin__pulse {
+      position: absolute;
+      top: 25px; left: 50%;
+      width: 50px; height: 50px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(208, 240, 170, 0.4);
+      z-index: -1;
+      animation: pulso 2.6s var(--ease-out) infinite;
+    }
+    @keyframes pulso {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      70% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* etiqueta de distância no meio da rota (curta: só o número) */
+    .mtag {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(var(--inv));
+      transform-origin: center center;
+      z-index: 7;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--r-pill);
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(20, 28, 12, 0.5);
+      opacity: 0;
+      transition: opacity .4s var(--ease-soft);
+    }
+    .mtag.is-on { opacity: 1; }
+    .mtag svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* ===== Chrome de UI sobre o mapa ===== */
+
+    /* cartão de informação.
+       Desktop: flutua no canto inferior esquerdo do mapa.
+       Mobile: sai do mapa e fica logo abaixo (regra @media). */
+    .mapa__info {
+      position: absolute;
+      left: clamp(22px, 5vw, 56px);
+      bottom: clamp(20px, 3vw, 34px);
+      z-index: 12;
+      width: min(330px, calc(100% - 130px));
+      padding: 18px 22px 20px;
+      border-radius: var(--r-md);
+      background: rgba(251, 249, 244, 0.95);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      backdrop-filter: blur(12px) saturate(1.2);
+      -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    }
+    .mapa__info-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--verde-escuro);
+    }
+    .mapa__info-name {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(23px, 2.8vw, 30px);
+      line-height: 1.1;
+      color: var(--tinta);
+      margin: 7px 0 4px;
+    }
+    .mapa__info-meta {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--tinta-suave);
+    }
+    .mapa__info-dist {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 13px;
+      padding: 6px 13px;
+      border-radius: var(--r-pill);
+      background: var(--verde-claro);
+      color: var(--verde-profundo);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .mapa__info-dist svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .mapa__info-dist[hidden] { display: none; }
+    .mapa__info-body { transition: opacity .3s var(--ease-soft), transform .35s var(--ease-out); }
+    .mapa__info.is-swapping .mapa__info-body { opacity: 0; transform: translateY(6px); }
+
+    /* controles (canto inferior direito) — setas menores e sutis */
+    .mapa__nav {
+      position: absolute;
+      right: clamp(16px, 3vw, 30px);
+      bottom: clamp(16px, 3vw, 30px);
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .mapa__hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--r-pill);
+      background: rgba(47, 61, 28, 0.9);
+      color: var(--creme-sobre-escuro);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      transition: opacity .5s var(--ease-soft), transform .5s var(--ease-out);
+    }
+    .mapa__hint svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .mapa__hint.is-hidden { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+    .mapa__nav-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border-radius: var(--r-pill);
+      background: rgba(251, 249, 244, 0.95);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .mapa__arrow {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--verde-escuro);
+      transition: transform .25s var(--ease-out), background .2s var(--ease-soft), color .2s var(--ease-soft);
+    }
+    .mapa__arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .mapa__arrow:hover { background: var(--verde-escuro); color: var(--off-white); }
+    .mapa__arrow:disabled { color: var(--tinta-dim); cursor: default; background: transparent; opacity: 0.4; }
+    .mapa__counter {
+      min-width: 52px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--tinta-suave);
+    }
+    .mapa__counter b { color: var(--verde-escuro); }
+
+    /* pontinhos */
+    .mapa__dots { display: inline-flex; gap: 7px; padding: 0 6px; }
+    .mapa__dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      border: none; padding: 0; cursor: pointer;
+      background: rgba(86, 115, 50, 0.3);
+      transition: background .25s var(--ease-soft), transform .25s var(--ease-out);
+    }
+    .mapa__dot.is-active { background: var(--verde-escuro); transform: scale(1.3); }
+
+    .lugar__cta { position: relative; text-align: center; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 28px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      /* sobre o verde escuro: botão verde claro p/ contraste */
+      background: var(--verde-claro);
+      color: var(--verde-profundo);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      transition: transform .26s var(--ease-out), background .2s var(--ease-soft), box-shadow .26s var(--ease-out);
+    }
+    .btn:hover { transform: translateY(-3px); background: var(--off-white); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4); }
+    .btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* ===== Mobile: cartão sai do mapa; rótulos dos pinos somem; setas menores ===== */
+    @media (max-width: 760px) {
+      .lugar { min-height: 100vh; height: auto; }
+      .mapa { height: min(54vh, 420px); }
+      .mapa__info {
+        position: static;
+        width: auto;
+        margin-top: 14px;
+        background: var(--off-white);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28), 0 0 0 1px var(--verde-linha) inset;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        text-align: left;
+      }
+      /* some com os rótulos sobre o mapa: quem nomeia é o cartão de baixo */
+      .pin__label { display: none; }
+      .mapa__nav {
+        left: 50%; right: auto;
+        transform: translateX(-50%);
+        bottom: 12px;
+        align-items: center;
+      }
+      .mapa__hint { display: none; }
+      .mapa__dots { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pin__pulse { animation: none; display: none; }
+      .mapa__canvas { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- faixa creme antes (seções anteriores da Home são creme) -->
+  <section class="demo-band">
+    <p>… seção anterior da Home (Pacotes), em creme …<br />role para chegar ao mapa</p>
+  </section>
+
+  <!-- ===================== O LUGAR — BANDA VERDE + MAPA INTERATIVO ===================== -->
+  <section class="lugar" id="lugar" aria-label="Trancoso à sua porta">
+    <div class="lugar__head">
+      <p class="lugar__eyebrow">
+        <span class="lugar__eyebrow-rule" aria-hidden="true"></span>
+        O lugar
+        <span class="lugar__eyebrow-rule" aria-hidden="true"></span>
+      </p>
+      <h2 class="lugar__title"><em>Trancoso</em> à sua porta</h2>
+      <p class="lugar__lede">O Quadrado a 2,5 km, a praia dos Nativos a 2,5 km, e o pôr do sol que faz o dia parar. A Casa Angelina coloca você perto de tudo que faz Trancoso ser Trancoso.</p>
+    </div>
+
+    <div class="mapa-wrap">
+      <div class="mapa" id="mapa">
+
+        <!-- A tela do mapa (pan/zoom via JS) -->
+        <div class="mapa__canvas" id="canvas">
+
+          <!-- Mapa cartográfico estilizado (estilo "mapa de verdade") nas cores
+               da marca. Coordenadas 2400 x 1600 (norte em cima). -->
+          <svg class="mapa__svg" viewBox="0 0 2400 1600" aria-hidden="true">
+            <defs>
+              <linearGradient id="mar" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#aecabf" />
+                <stop offset="1" stop-color="#9bc1b6" />
+              </linearGradient>
+            </defs>
+
+            <!-- base (papel de mapa, areia quente) -->
+            <rect x="0" y="0" width="2400" height="1600" fill="#e8dcc0" />
+
+            <!-- parques / vegetação (polígonos orgânicos em dois verdes) -->
+            <g>
+              <path d="M120 420 C 280 360 460 410 520 540 C 565 645 470 715 350 700 C 220 685 90 580 120 420 Z" fill="#bdce93" />
+              <path d="M1240 440 C 1380 405 1440 525 1405 640 C 1370 745 1245 745 1190 650 C 1140 570 1140 490 1240 440 Z" fill="#c7d6a4" />
+              <path d="M160 880 C 320 835 440 935 415 1065 C 390 1180 250 1200 165 1100 C 95 1020 80 925 160 880 Z" fill="#bdce93" />
+              <path d="M1250 900 C 1395 865 1450 985 1398 1095 C 1345 1190 1215 1165 1188 1060 C 1168 975 1178 925 1250 900 Z" fill="#c7d6a4" />
+              <path d="M560 1140 C 760 1085 905 1210 860 1370 C 812 1525 600 1540 520 1395 C 458 1280 465 1185 560 1140 Z" fill="#bdce93" />
+              <path d="M1300 1450 C 1430 1420 1490 1505 1448 1585 C 1408 1660 1290 1648 1262 1565 C 1240 1500 1245 1470 1300 1450 Z" fill="#c7d6a4" />
+              <path d="M970 1480 C 1052 1465 1102 1525 1072 1585 C 1043 1635 967 1632 950 1568 C 938 1522 936 1496 970 1480 Z" fill="#bdce93" />
+              <path d="M250 1170 C 370 1142 452 1205 425 1295 C 402 1372 298 1382 252 1315 C 214 1262 205 1198 250 1170 Z" fill="#c7d6a4" />
+            </g>
+
+            <!-- mar (leste) — tom dessaturado, nunca azul de UI -->
+            <path d="M1500 0 C 1556 280 1462 520 1538 780 C 1604 1010 1492 1240 1556 1460 C 1596 1560 1520 1580 1520 1600 L 2400 1600 L 2400 0 Z" fill="url(#mar)" />
+            <!-- faixa de praia (areia clara) ao longo da costa -->
+            <path d="M1500 0 C 1556 280 1462 520 1538 780 C 1604 1010 1492 1240 1556 1460 C 1596 1560 1520 1580 1520 1600" fill="none" stroke="#efe6d0" stroke-width="26" />
+            <!-- ondas sutis -->
+            <g opacity="0.45" stroke="#8bb4a8" stroke-width="3" fill="none">
+              <path d="M1800 420 q 44 -24 88 0 t 88 0" />
+              <path d="M1860 860 q 44 -24 88 0 t 88 0" />
+              <path d="M1820 1240 q 44 -24 88 0 t 88 0" />
+              <path d="M1840 1500 q 44 -24 88 0 t 88 0" />
+            </g>
+
+            <!-- rio + afluente (mesma água dessaturada) -->
+            <g fill="none" stroke="#a8c6bb" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M520 180 C 670 320 715 480 670 650 C 625 810 780 880 920 980 C 1080 1090 1110 1240 1230 1360 C 1330 1460 1395 1500 1480 1560" stroke-width="22" />
+              <path d="M300 720 C 430 765 525 835 660 870" stroke-width="14" />
+            </g>
+
+            <!-- estradas principais (claras, recortadas no papel) -->
+            <g fill="none" stroke="#f2e9d4" stroke-linecap="round">
+              <path d="M1150 500 C 1095 720 1175 940 1135 1150 C 1100 1300 1165 1360 1150 1360" stroke-width="20" />
+              <path d="M1480 560 C 1442 860 1500 1140 1458 1380 C 1444 1470 1465 1500 1450 1500" stroke-width="16" />
+              <path d="M180 740 C 510 900 800 1050 1130 1150" stroke-width="16" />
+              <path d="M260 1150 C 530 1045 830 1080 1135 1150" stroke-width="14" />
+              <path d="M640 1450 C 910 1380 1150 1370 1440 1380" stroke-width="16" />
+              <path d="M520 1360 C 750 1325 910 1300 1150 1360" stroke-width="14" />
+              <path d="M1440 1380 C 1455 1430 1460 1465 1470 1500" stroke-width="12" />
+            </g>
+
+            <!-- limites de lotes / campos (linhas finas) -->
+            <g fill="none" stroke="#d6c5a2" stroke-width="4" stroke-linecap="round">
+              <path d="M250 400 L 530 660" />
+              <path d="M530 660 L 480 920" />
+              <path d="M660 870 L 940 1080" />
+              <path d="M170 880 L 440 905" />
+              <path d="M360 1150 L 720 1110" />
+              <path d="M250 1280 L 620 1255" />
+              <path d="M520 1360 L 870 1300" />
+              <path d="M300 1190 L 590 1225" />
+              <path d="M900 1090 L 1120 1040" />
+              <path d="M980 980 L 1255 1075" />
+              <path d="M1240 660 L 1450 680" />
+              <path d="M1180 470 L 1405 490" />
+              <path d="M860 1300 L 980 1480" />
+              <path d="M1150 1360 L 1290 1450" />
+            </g>
+
+            <!-- pista do Aeroporto de Porto Seguro (norte) -->
+            <g transform="rotate(-30 1150 470)">
+              <rect x="990" y="404" width="320" height="22" rx="11" fill="#d8c7a4" />
+              <line x1="1006" y1="415" x2="1294" y2="415" stroke="#efe6d0" stroke-width="5" stroke-dasharray="18 16" />
+              <rect x="1018" y="464" width="232" height="15" rx="7" fill="#d8c7a4" />
+            </g>
+
+            <!-- O Quadrado (gramado alongado) + casinhas coloridas discretas -->
+            <rect x="1058" y="1322" width="188" height="70" rx="9" fill="#c7d6a4" />
+            <g opacity="0.85">
+              <rect x="1065" y="1304" width="15" height="13" rx="2" fill="#e7c79a" />
+              <rect x="1097" y="1304" width="15" height="13" rx="2" fill="#d9a98b" />
+              <rect x="1129" y="1304" width="15" height="13" rx="2" fill="#cbb9d6" />
+              <rect x="1161" y="1304" width="15" height="13" rx="2" fill="#e7c79a" />
+              <rect x="1193" y="1304" width="15" height="13" rx="2" fill="#bcd6cf" />
+              <rect x="1065" y="1398" width="15" height="13" rx="2" fill="#d9a98b" />
+              <rect x="1097" y="1398" width="15" height="13" rx="2" fill="#bcd6cf" />
+              <rect x="1129" y="1398" width="15" height="13" rx="2" fill="#e7c79a" />
+              <rect x="1161" y="1398" width="15" height="13" rx="2" fill="#cbb9d6" />
+              <rect x="1193" y="1398" width="15" height="13" rx="2" fill="#d9a98b" />
+            </g>
+
+            <!-- rótulos geográficos discretos -->
+            <text x="1010" y="1556" font-size="44" letter-spacing="6">Trancoso</text>
+            <text x="985" y="660" font-size="34" letter-spacing="5">Porto Seguro</text>
+            <text x="1158" y="1080" font-size="24" transform="rotate(84 1158 1080)">BA-987</text>
+            <text x="968" y="950" font-size="20" transform="rotate(-22 968 950)" fill="#86afa3">Rio Trancoso</text>
+            <text x="2010" y="820" font-size="30" transform="rotate(90 2010 820)" fill="#7da89b">Oceano Atlântico</text>
+
+            <!-- rota Casa Angelina -> ponto ativo -->
+            <path class="mapa__route" id="route" d="" />
+          </svg>
+
+          <!-- ===== Marcadores (ícones Lucide, alta fidelidade) ===== -->
+          <!-- Casa Angelina (âncora) -->
+          <div class="pin pin--home" data-pin="casa" style="left:900px; top:1250px;">
+            <span class="pin__pulse" aria-hidden="true"></span>
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            </span>
+            <span class="pin__label">Casa Angelina</span>
+          </div>
+
+          <!-- O Quadrado (igrejinha) -->
+          <div class="pin pin--poi" data-pin="quadrado" style="left:1150px; top:1360px;">
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 9h4"/><path d="M12 7v5"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5.618a1 1 0 0 0-.553-.894l-4.553-2.277a2 2 0 0 0-1.788 0L6.553 4.724A1 1 0 0 0 6 5.618V22"/><path d="m18 7 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.618a1 1 0 0 1 .553-.894L6 7"/></svg>
+            </span>
+            <span class="pin__label">Igrejinha do Quadrado</span>
+          </div>
+
+          <!-- Restaurantes -->
+          <div class="pin pin--poi" data-pin="restaurantes" style="left:1235px; top:1345px;">
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            </span>
+            <span class="pin__label">Restaurantes</span>
+          </div>
+
+          <!-- Praia dos Nativos -->
+          <div class="pin pin--poi" data-pin="nativos" style="left:1430px; top:1380px;">
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10.06 10.06 0 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/></svg>
+            </span>
+            <span class="pin__label">Praia dos Nativos</span>
+          </div>
+
+          <!-- Praia dos Coqueiros (palmeira) -->
+          <div class="pin pin--poi" data-pin="coqueiros" style="left:1470px; top:1500px;">
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>
+            </span>
+            <span class="pin__label">Praia dos Coqueiros</span>
+          </div>
+
+          <!-- Aeroporto de Porto Seguro -->
+          <div class="pin pin--poi" data-pin="aeroporto" style="left:1150px; top:500px;">
+            <span class="pin__dot">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 4.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+            </span>
+            <span class="pin__label">Aeroporto de Porto Seguro</span>
+          </div>
+
+          <!-- etiqueta de distância (meio da rota) -->
+          <div class="mtag" id="mtag" style="left:0; top:0;">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg>
+            <span id="mtagText">1,8 km</span>
+          </div>
+
+        </div><!-- /canvas -->
+
+        <!-- ===== Controles (fixos sobre o mapa) ===== -->
+        <div class="mapa__nav">
+          <span class="mapa__hint" id="hint">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l-3 3 3 3"/><path d="M15 12l3 3-3 3"/><path d="M6 9h9a3 3 0 0 1 3 3"/></svg>
+            Navegue pelo mapa e descubra a região
+          </span>
+          <div class="mapa__nav-row">
+            <button class="mapa__arrow" id="prev" type="button" aria-label="Ponto anterior" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <span class="mapa__dots" id="dots" aria-hidden="true"></span>
+            <span class="mapa__counter"><b id="counterNow">01</b>&nbsp;/&nbsp;<span id="counterTotal">06</span></span>
+            <button class="mapa__arrow" id="next" type="button" aria-label="Próximo ponto">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /mapa -->
+
+      <!-- cartão de info: no desktop flutua sobre o mapa, no mobile cai aqui embaixo -->
+      <div class="mapa__info" id="info">
+        <div class="mapa__info-body" id="infoBody">
+          <p class="mapa__info-eyebrow" id="infoEyebrow">Ponto de partida</p>
+          <h3 class="mapa__info-name" id="infoName">Casa Angelina</h3>
+          <p class="mapa__info-meta" id="infoMeta">Sua base em Trancoso, entre a mata e o mar.</p>
+          <span class="mapa__info-dist" id="infoDist" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg>
+            <span id="infoDistText">1,8 km</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lugar__cta">
+      <a class="btn" href="trancoso.html">
+        Descobrir Trancoso
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- faixa creme depois (retomando o creme nas próximas seções) -->
+  <section class="demo-band">
+    <p>… próxima seção da Home (Instagram / Reservas), de volta ao creme …</p>
+  </section>
+
+  <script>
+    (function () {
+      var mapa = document.getElementById('mapa');
+      var canvas = document.getElementById('canvas');
+      var route = document.getElementById('route');
+      var mtag = document.getElementById('mtag');
+      var mtagText = document.getElementById('mtagText');
+      var info = document.getElementById('info');
+      var hint = document.getElementById('hint');
+      var prevBtn = document.getElementById('prev');
+      var nextBtn = document.getElementById('next');
+      var dotsWrap = document.getElementById('dots');
+      var counterNow = document.getElementById('counterNow');
+
+      var CW = 2400, CH = 1600;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ---- Pontos do roteiro ----
+      // focus: ponto centralizado | world: largura (em unidades SVG) que cabe na
+      // largura do mapa (zoom). tag = etiqueta curta no mapa; dist = texto do cartão.
+      var steps = [
+        {
+          pin: 'casa', focus: [980, 1295], world: 820,
+          eyebrow: 'Ponto de partida', name: 'Casa Angelina',
+          meta: 'Sua base em Trancoso, entre a mata e o mar.',
+          route: '', tag: '', dist: ''
+        },
+        {
+          pin: 'quadrado', focus: [1030, 1335], world: 700,
+          eyebrow: 'O coração da vila', name: 'O Quadrado',
+          meta: 'A igrejinha e o centro histórico de Trancoso.',
+          route: 'M900 1250 Q 1000 1330 1150 1360', mid: [1010, 1318],
+          tag: '2,5 km', dist: '2,5 km'
+        },
+        {
+          pin: 'nativos', focus: [1170, 1320], world: 980,
+          eyebrow: 'Pé na areia', name: 'Praia dos Nativos',
+          meta: 'Mar calmo e barracas logo abaixo das falésias.',
+          route: 'M900 1250 Q 1150 1290 1430 1380', mid: [1150, 1300],
+          tag: '2,5 km', dist: '2,5 km'
+        },
+        {
+          pin: 'coqueiros', focus: [1200, 1390], world: 1060,
+          eyebrow: 'Mais um pé na areia', name: 'Praia dos Coqueiros',
+          meta: 'Coqueiros e águas calmas, logo ao sul dos Nativos.',
+          route: 'M900 1250 Q 1180 1340 1470 1500', mid: [1205, 1385],
+          tag: '3 km', dist: '3 km'
+        },
+        {
+          pin: 'restaurantes', focus: [1060, 1310], world: 760,
+          eyebrow: 'Para comer bem', name: 'Restaurantes',
+          meta: 'Boa gastronomia a poucos minutos da casa.',
+          route: 'M900 1250 Q 1040 1320 1235 1345', mid: [1058, 1314],
+          tag: '1,1 km', dist: 'a partir de 1,1 km'
+        },
+        {
+          pin: 'aeroporto', focus: [1040, 880], world: 2800,
+          eyebrow: 'Chegada', name: 'Aeroporto de Porto Seguro',
+          meta: 'Cerca de 1h15min de carro pela BA-987.',
+          route: 'M900 1250 Q 1030 1210 1110 1000 Q 1190 740 1150 540', mid: [1110, 930],
+          tag: '26 km', dist: '26 km'
+        }
+      ];
+
+      var pins = {};
+      [].forEach.call(canvas.querySelectorAll('.pin'), function (p) { pins[p.dataset.pin] = p; });
+
+      var i = 0;
+      var cur = { x: steps[0].focus[0], y: steps[0].focus[1], w: steps[0].world };
+      var tgt = { x: cur.x, y: cur.y, w: cur.w };
+      var raf = null;
+
+      document.getElementById('counterTotal').textContent = ('0' + steps.length).slice(-2);
+
+      steps.forEach(function (s, k) {
+        var b = document.createElement('button');
+        b.className = 'mapa__dot' + (k === 0 ? ' is-active' : '');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Ir para ' + s.name);
+        b.addEventListener('click', function () { firstInteract(); go(k); });
+        dotsWrap.appendChild(b);
+      });
+      var dots = dotsWrap.querySelectorAll('.mapa__dot');
+
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+      function render() {
+        var vw = mapa.clientWidth, vh = mapa.clientHeight;
+        // s vem da largura (vw/world); o termo vh/(world*0.72) garante que em telas
+        // retrato (mobile) o ponto seja enquadrado de perto, e não o mapa inteiro.
+        // os dois últimos termos garantem que a tela do mapa sempre cubra a moldura.
+        var s = Math.max(vw / cur.w, vh / (cur.w * 0.72), vw / CW, vh / CH);
+        var dispW = CW * s, dispH = CH * s;
+        var tx, ty;
+        if (dispW <= vw) { tx = (vw - dispW) / 2; }
+        else { tx = Math.min(0, Math.max(vw - dispW, vw / 2 - cur.x * s)); }
+        if (dispH <= vh) { ty = (vh - dispH) / 2; }
+        else { ty = Math.min(0, Math.max(vh - dispH, vh / 2 - cur.y * s)); }
+
+        canvas.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+        // contra-escala dos pinos/etiquetas, limitada p/ não inflar no zoom-out
+        canvas.style.setProperty('--inv', clamp(1 / s, 0.55, 1.4));
+
+        var st = steps[i];
+        if (st.route && st.mid) {
+          mtag.style.left = st.mid[0] + 'px';
+          mtag.style.top = st.mid[1] + 'px';
+        }
+      }
+
+      function frame() {
+        var f = 0.12;
+        cur.x += (tgt.x - cur.x) * f;
+        cur.y += (tgt.y - cur.y) * f;
+        cur.w += (tgt.w - cur.w) * f;
+        render();
+        if (Math.abs(tgt.x - cur.x) + Math.abs(tgt.y - cur.y) + Math.abs(tgt.w - cur.w) > 0.6) {
+          raf = requestAnimationFrame(frame);
+        } else {
+          cur.x = tgt.x; cur.y = tgt.y; cur.w = tgt.w; render(); raf = null;
+        }
+      }
+
+      function animateTo(st) {
+        tgt.x = st.focus[0]; tgt.y = st.focus[1]; tgt.w = st.world;
+        if (reduce) { cur.x = tgt.x; cur.y = tgt.y; cur.w = tgt.w; render(); return; }
+        if (!raf) raf = requestAnimationFrame(frame);
+      }
+
+      function setRoute(d) {
+        if (!d) { route.style.opacity = 0; mtag.classList.remove('is-on'); return; }
+        route.setAttribute('d', d);
+        var len = route.getTotalLength();
+        route.style.transition = 'none';
+        route.style.strokeDasharray = len;
+        route.style.strokeDashoffset = len;
+        route.style.opacity = 1;
+        route.getBoundingClientRect(); // reflow
+        route.style.transition = 'stroke-dashoffset 1.1s var(--ease-out)';
+        route.style.strokeDashoffset = 0;
+      }
+
+      function go(k) {
+        k = Math.max(0, Math.min(steps.length - 1, k));
+        i = k;
+        var st = steps[i];
+
+        info.classList.add('is-swapping');
+        setTimeout(function () {
+          document.getElementById('infoEyebrow').textContent = st.eyebrow;
+          document.getElementById('infoName').textContent = st.name;
+          document.getElementById('infoMeta').textContent = st.meta;
+          var distEl = document.getElementById('infoDist');
+          if (st.dist) {
+            document.getElementById('infoDistText').textContent = st.dist;
+            distEl.hidden = false;
+          } else {
+            distEl.hidden = true;
+          }
+          info.classList.remove('is-swapping');
+        }, 200);
+
+        [].forEach.call(canvas.querySelectorAll('.pin--poi'), function (p) { p.classList.remove('is-active'); });
+        if (pins[st.pin] && pins[st.pin].classList.contains('pin--poi')) {
+          pins[st.pin].classList.add('is-active');
+        }
+
+        setRoute(st.route);
+        if (st.tag && st.route) {
+          mtagText.textContent = st.tag;
+          mtag.classList.add('is-on');
+        } else {
+          mtag.classList.remove('is-on');
+        }
+
+        counterNow.textContent = ('0' + (i + 1)).slice(-2);
+        prevBtn.disabled = (i === 0);
+        nextBtn.disabled = (i === steps.length - 1);
+        [].forEach.call(dots, function (d, idx) { d.classList.toggle('is-active', idx === i); });
+
+        animateTo(st);
+      }
+
+      function firstInteract() { hint.classList.add('is-hidden'); }
+
+      nextBtn.addEventListener('click', function () { firstInteract(); go(i + 1); });
+      prevBtn.addEventListener('click', function () { firstInteract(); go(i - 1); });
+
+      window.addEventListener('keydown', function (e) {
+        var r = mapa.getBoundingClientRect();
+        var visible = r.top < window.innerHeight * 0.7 && r.bottom > window.innerHeight * 0.3;
+        if (!visible) return;
+        if (e.key === 'ArrowRight') { firstInteract(); go(i + 1); }
+        else if (e.key === 'ArrowLeft') { firstInteract(); go(i - 1); }
+      });
+
+      window.addEventListener('resize', render, { passive: true });
+
+      render();
+      go(0);
+    })();
+  </script>
+</body>
+</html>

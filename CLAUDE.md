@@ -1,18 +1,28 @@
 # Casa Angelina — Projeto de Site
 
 ## O que é
-Site da **Casa Angelina**, casa de hospedagem (pousada) em **Trancoso, Bahia**. A casa é
-alugada inteira para o hóspede. Objetivo de negócio: valorizar a casa e o ambiente natural,
-gerar **reservas diretas** (reduzindo dependência e taxas de Airbnb/Booking) e dar autonomia
-de gestão aos donos. Público: viajantes em busca de hospedagem exclusiva e experiência em Trancoso.
+Site da **Casa Angelina**, casa de hospedagem (pousada) em **Trancoso, Bahia**. Objetivo de
+negócio: valorizar a casa e o ambiente natural, gerar **reservas diretas** (reduzindo
+dependência e taxas de Airbnb/Booking) e dar autonomia de gestão aos donos. Público: viajantes
+em busca de hospedagem exclusiva e experiência em Trancoso.
+
+### Modelo de hospedagem (atualizado 2026-06-22)
+A casa funciona em **duas formas** (a regra antiga "sempre alugada inteira" foi descartada):
+- **Quartos individuais** — na maior parte do ano cada quarto é reservado separadamente; as
+  áreas comuns (piscina, jardim, café da manhã) são compartilhadas com os outros hóspedes.
+- **Casa inteira** — disponível **só no Réveillon e no Carnaval** (datas exatas a confirmar);
+  no resto do ano, um grupo tem a casa inteira **reservando os quatro quartos juntos**.
+- **Quartos:** 4 dormitórios. Cada um acomoda 2 pessoas, exceto o Triplo (3 pessoas, 1 cama de
+  casal + 1 de solteiro). A casa inteira acomoda **até 12 pessoas**. Há 2 unidades do Superior
+  King-size; Triplo e Superiores têm 30 m² cada.
 
 ## Cliente & contatos
-- **Segmento:** pousada / hospedagem exclusiva (casa inteira).
+- **Segmento:** pousada / hospedagem exclusiva (quartos individuais e casa inteira).
 - **Localização:** Trancoso, Bahia.
 - **Instagram:** https://www.instagram.com/casangelinatrancoso
 - **Booking:** https://www.booking.com/hotel/br/casa-angelina.pt-br.html
 - **Airbnb:** *(a confirmar — cadastro atual está com nome incorreto, em ajuste pelo cliente)*
-- **WhatsApp:** +55 73 9961-9953 *(8 dígitos no readme — confirmar se falta o "9" de celular)*
+- **WhatsApp:** +55 73 99961-9953 *(confirmado pelo cliente — link wa.me: 5573999619953)*
 - **Interlocutores:** Edmundo Alves, Bruno Eduardo (donos/parceiros).
 
 ## Identidade visual (nova paleta — 2026-06-19)
@@ -89,11 +99,16 @@ Sem travessões, sem emojis, números concretos, português do Brasil.
 2. **Só depois de aprovado pelo cliente**, subir na ErEhost (FTP / `public_html`).
 
 ## Estado atual
-- **Fase:** Design → Plano do **site de apresentação** (subprojeto A). Briefing consolidado e
-  nova paleta registrada.
+- **Fase:** Design → Copy/conteúdo do **site de apresentação** (subprojeto A) mapeada. Briefing
+  consolidado, nova paleta e dados do Booking registrados.
 - **Entregue:** página de manutenção (one-page, vídeo de fundo, CTAs, `noindex`) no GitHub Pages
   e na ErEhost.
-- **Decididas:** design skill `casa-angelina-design` criada; site **multi-página**.
-- **Decisões em aberto:** confirmar WhatsApp (8 dígitos no readme) e link do Airbnb. Construção do
-  site começa por etapas (próxima: planejar/montar a Home).
+- **Docs de conteúdo:** `docs/INFORMACOES.md` (dossiê de fatos), `docs/COPY.md` (copy completa
+  das 7 páginas), `docs/PAINEL.md` (desenho funcional do subprojeto B).
+- **Decididas:** design skill `casa-angelina-design`; site **multi-página**; modelo de
+  hospedagem **quartos individuais + casa inteira no Réveillon/Carnaval ou reservando tudo**
+  (até 12 pessoas); WhatsApp confirmado (+55 73 99961-9953).
+- **Decisões em aberto:** datas exatas de Réveillon/Carnaval; link/nome do Airbnb; preços (por
+  quarto e casa inteira) e itens dos pacotes; endereço/mapa; e-mail; política de cancelamento;
+  ensaio de fotos/drone. Próximo: montar a Home.
 - **Assets:** `images/casa1..7.png`, `images/logo*.png`, `images/favicon.png`, `videos/video-desktop.mp4`, `videos/video-mobile.mp4`.
