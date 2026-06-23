@@ -53,6 +53,12 @@
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
       --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
       --ease-gentle: cubic-bezier(0.33, 0.8, 0.4, 1);
+
+      /* Largura padrão das seções — alinha todo o conteúdo (exceto hero e
+         a galeria "os ambientes") à mesma medida da seção "onde você
+         descansa" (cartões das "duas formas de ficar"). */
+      --container: 1200px;
+      --gutter: clamp(20px, 5vw, 64px);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -592,14 +598,14 @@
        ============================================================ */
     .blocos {
       background: transparent;          /* revela o vídeo de fundo */
-      padding: clamp(20px, 3vh, 40px) clamp(20px, 6vw, 80px) clamp(80px, 13vh, 140px);
+      padding: clamp(20px, 3vh, 40px) var(--gutter) clamp(80px, 13vh, 140px);
       text-align: center;
     }
     .blocos__grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: clamp(18px, 2.6vw, 34px);
-      max-width: 1180px;
+      max-width: var(--container);
       margin: 0 auto;
     }
     .bloco { margin: 0; text-align: left; }
@@ -640,11 +646,11 @@
        ============================================================ */
     .formas {
       background: transparent;          /* revela o vídeo de fundo */
-      padding: clamp(30px, 6vh, 70px) clamp(16px, 5vw, 64px) clamp(72px, 12vh, 140px);
+      padding: clamp(30px, 6vh, 70px) var(--gutter) clamp(72px, 12vh, 140px);
     }
     .formas__list {
       list-style: none;
-      max-width: 1200px;
+      max-width: var(--container);
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -779,6 +785,111 @@
     }
 
     /* ============================================================
+       PACOTES — carrossel circular de experiências (port vanilla do
+       "circular testimonials"). Mesma banda transparente das seções
+       acima (vídeo de fundo + véu creme). É renderizado por JS a partir
+       de um array de dados: sem pacotes cadastrados, a seção é removida
+       do site; com 1 ou mais, ela aparece automaticamente.
+       ============================================================ */
+    .pacotes {
+      background: transparent;          /* revela o vídeo de fundo */
+      padding: clamp(20px, 3vh, 48px) var(--gutter) clamp(80px, 13vh, 140px);
+    }
+    .pacotes__inner { max-width: var(--container); margin-inline: auto; }
+
+    .pacotes__head { max-width: 720px; margin: 0 auto clamp(34px, 5vw, 58px); text-align: center; }
+    .pacotes__eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde-escuro); margin-bottom: 16px;
+    }
+    .pacotes__eyebrow-rule { display: block; width: 30px; height: 1px; background: var(--verde-escuro); opacity: 0.5; }
+    .pacotes__title {
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(34px, 5.4vw, 66px); line-height: 1.04; color: var(--tinta);
+    }
+    .pacotes__title em { font-style: italic; color: var(--verde-escuro); }
+    .pacotes__lede {
+      font-family: var(--font-display); font-style: italic; font-weight: 400;
+      font-size: clamp(17px, 2vw, 22px); line-height: 1.5; color: var(--tinta-suave);
+      max-width: 52ch; margin: 12px auto 0;
+    }
+
+    .pacotes__carousel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 76px);
+      align-items: center;
+    }
+
+    /* Pilha de fotos (deck de "polaroids" que troca ao navegar) */
+    .pac__stack {
+      position: relative;
+      width: 100%; max-width: 440px; aspect-ratio: 4 / 5;
+      margin-inline: auto;
+      perspective: 1200px;
+    }
+    .pac__photo {
+      position: absolute; inset: 0; margin: 0;
+      border-radius: var(--r-lg); overflow: hidden;
+      box-shadow: 0 30px 60px rgba(43, 51, 32, 0.18);
+      transform-origin: center center;
+      transition: transform .7s var(--ease-out), opacity .7s var(--ease-out);
+    }
+    .pac__photo img { width: 100%; height: 100%; object-fit: cover; }
+    .pacotes:not([data-single="true"]) .pac__photo { cursor: pointer; }
+
+    /* Lado do texto */
+    .pac__content { max-width: 460px; }
+    .pac__name {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(28px, 3.4vw, 42px); line-height: 1.08; color: var(--verde-escuro);
+    }
+    .pac__price {
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra, #b5703f);
+      margin-top: 10px;
+    }
+    .pac__desc {
+      font-size: 16px; line-height: 1.7; color: var(--tinta-suave);
+      margin-top: 16px; max-width: 46ch;
+    }
+    /* fade-swap do texto ao trocar de pacote */
+    .pac__name, .pac__price, .pac__desc {
+      transition: opacity .25s var(--ease-soft), transform .25s var(--ease-soft);
+    }
+    .pac__content.is-swapping .pac__name,
+    .pac__content.is-swapping .pac__price,
+    .pac__content.is-swapping .pac__desc { opacity: 0; transform: translateY(8px); }
+
+    .pac__controls { display: flex; align-items: center; gap: 18px; margin-top: 28px; }
+    .pac__arrows { display: flex; gap: 10px; }
+    .pac__arrow {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer;
+      background: transparent; color: var(--verde-escuro);
+      border: 1px solid var(--verde-linha);
+      transition: background .2s var(--ease-soft), color .2s var(--ease-soft),
+                  transform .2s var(--ease-out), border-color .2s var(--ease-soft);
+    }
+    .pac__arrow:hover { background: var(--verde-escuro); color: var(--off-white); border-color: var(--verde-escuro); transform: translateY(-2px); }
+    .pac__arrow svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
+    .pac__counter { font-family: var(--font-body); font-size: 13px; letter-spacing: 0.14em; color: var(--tinta-dim); }
+    .pac__counter .now { color: var(--verde-escuro); font-weight: 500; }
+    .pac__cta { margin-top: 30px; }
+
+    /* 1 pacote só: sem setas/contador (nada a navegar) */
+    .pacotes[data-single="true"] .pac__controls { display: none; }
+
+    @media (max-width: 860px) {
+      .pacotes__carousel { grid-template-columns: 1fr; gap: 44px; }
+      .pac__stack { max-width: 340px; }
+      .pac__content { max-width: 100%; text-align: center; margin-inline: auto; }
+      .pac__desc { margin-inline: auto; }
+      .pac__controls { justify-content: center; }
+    }
+
+    /* ============================================================
        RESPONSIVO
        ============================================================ */
     /* Sem drawer mobile ainda: abaixo do desktop, escondemos os links */
@@ -817,6 +928,7 @@
       .nav, .nav__logo, .nav__btn--open, .nav__btn--compact { transition: none; }
       .reveal, .reveal-group > * { opacity: 1 !important; transform: none !important; transition: none; }
       .zp__media { transform: none !important; }
+      .pac__photo, .pac__name, .pac__price, .pac__desc { transition: none; }
     }
 
     /* ============================================================
@@ -831,7 +943,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(80px, 13vh, 150px) clamp(18px, 5vw, 64px) clamp(40px, 7vh, 80px);
+      padding: clamp(80px, 13vh, 150px) var(--gutter) clamp(40px, 7vh, 80px);
       overflow: hidden;
       isolation: isolate;
     }
@@ -854,7 +966,7 @@
     /* O cartão impresso (a "foto" pendurada) */
     .footer-card {
       position: relative;
-      width: min(1120px, 100%);
+      width: min(var(--container), 100%);
       background: linear-gradient(180deg, var(--off-white) 0%, #f2ebdc 100%);
       border-radius: 16px;
       padding: clamp(34px, 4.4vw, 58px) clamp(24px, 4vw, 60px) clamp(24px, 3vw, 38px);
@@ -1047,7 +1159,7 @@
       flex-direction: column;
       justify-content: center;
       gap: clamp(16px, 2.6vh, 30px);
-      padding: clamp(36px, 6vh, 64px) 0;
+      padding: clamp(36px, 6vh, 64px) var(--gutter);
       background: var(--verde-profundo);
       color: var(--creme-sobre-escuro);
       overflow: hidden;
@@ -1064,9 +1176,9 @@
 
     .lugar__head {
       position: relative;
-      max-width: 1180px;
+      max-width: var(--container);
       margin: 0 auto;
-      padding: 0 clamp(20px, 5vw, 56px);
+      padding: 0;
       text-align: center;
     }
     .lugar__eyebrow {
@@ -1100,9 +1212,9 @@
     .mapa-wrap {
       position: relative;
       width: 100%;
-      max-width: min(1460px, 92vw);
+      max-width: var(--container);
       margin: 0 auto;
-      padding: 0 clamp(14px, 3vw, 30px);
+      padding: 0;
     }
     .mapa {
       position: relative;
@@ -1590,6 +1702,50 @@
       </li>
 
     </ul>
+  </section>
+
+  <!-- ===================== PACOTES — carrossel circular de experiências =====================
+       A lista de pacotes é montada por JS (ver script "PACOTES" no fim do arquivo).
+       Hoje a casa ainda não tem pacotes; os exemplos servem para a seção já ficar pronta.
+       Quando o painel de cadastro existir, basta alimentar o array: sem nenhum pacote a
+       seção some do site; com 1 ou mais ela aparece automaticamente. -->
+  <section class="pacotes" id="pacotes" aria-label="Pacotes e experiências da Casa Angelina">
+    <div class="pacotes__inner">
+      <header class="pacotes__head reveal">
+        <p class="pacotes__eyebrow">
+          <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
+          Pacotes
+          <span class="pacotes__eyebrow-rule" aria-hidden="true"></span>
+        </p>
+        <h2 class="pacotes__title"><em>Experiências</em> sob medida</h2>
+        <p class="pacotes__lede">Some um toque especial à sua estadia, da decoração romântica à celebração entre a mata e a piscina.</p>
+      </header>
+
+      <div class="pacotes__carousel reveal">
+        <!-- pilha de fotos (preenchida por JS) -->
+        <div class="pac__stack" id="pacStack" aria-live="polite"></div>
+
+        <div class="pac__content">
+          <h3 class="pac__name" id="pacName"></h3>
+          <p class="pac__price" id="pacPrice"></p>
+          <p class="pac__desc" id="pacDesc"></p>
+
+          <div class="pac__controls">
+            <div class="pac__arrows">
+              <button class="pac__arrow" id="pacPrev" type="button" aria-label="Pacote anterior">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <button class="pac__arrow" id="pacNext" type="button" aria-label="Próximo pacote">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+            <span class="pac__counter"><span class="now" id="pacNow">01</span> / <span id="pacTotal">01</span></span>
+          </div>
+
+          <a class="btn btn--primary pac__cta" id="pacCta" href="#" target="_blank" rel="noopener">Contratar pacote</a>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ===================== O LUGAR — MAPA INTERATIVO DE TRANCOSO ===================== -->
@@ -2098,6 +2254,144 @@
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onScroll, { passive: true });
       update();
+    })();
+
+    /* ===== PACOTES — carrossel circular de experiências ===== */
+    (function () {
+      var section = document.getElementById('pacotes');
+      if (!section) return;
+
+      // ----------------------------------------------------------
+      //  FONTE DE DADOS DOS PACOTES
+      //  A casa ainda não tem pacotes; estes são exemplos para a
+      //  seção já ficar pronta. No futuro, este array virá do painel
+      //  de cadastro (subprojeto B). Cada pacote:
+      //    { nome, preco, descricao, foto, alt }
+      //  Regras de exibição:
+      //    - array vazio  -> a seção é removida (não existe no site);
+      //    - 1 pacote     -> aparece sem setas nem contador;
+      //    - 2 ou mais    -> carrossel completo com setas.
+      // ----------------------------------------------------------
+      var WHATS = 'https://wa.me/5573999619953?text=';
+      var PACOTES = [
+        {
+          nome: 'Pacote Romântico',
+          preco: 'a partir de R$ 690',
+          descricao: 'Quarto decorado com pétalas e velas, espumante gelado na chegada e café da manhã servido na varanda, só para o casal.',
+          foto: 'images/pacote-romantico.jpg',
+          alt: 'Quarto preparado com decoração romântica na Casa Angelina.'
+        },
+        {
+          nome: 'Pacote Lua de Mel',
+          preco: 'a partir de R$ 1.280',
+          descricao: 'Três diárias em quarto superior, decoração especial, um jantar à luz de velas e um passeio de barco pela costa de Trancoso.',
+          foto: 'images/pacote-lua-de-mel.jpg',
+          alt: 'Mesa posta para um jantar de lua de mel na Casa Angelina.'
+        },
+        {
+          nome: 'Pacote Aniversário',
+          preco: 'a partir de R$ 520',
+          descricao: 'Decoração comemorativa no quarto, bolo artesanal e um brinde da casa para celebrar a data entre a mata e a piscina.',
+          foto: 'images/pacote-aniversario.jpg',
+          alt: 'Decoração de aniversário com bolo na Casa Angelina.'
+        }
+      ];
+
+      // Sem pacotes cadastrados: a seção não existe no site.
+      if (!PACOTES.length) { section.remove(); return; }
+
+      var stack = document.getElementById('pacStack');
+      var content = section.querySelector('.pac__content');
+      var nameEl = document.getElementById('pacName');
+      var priceEl = document.getElementById('pacPrice');
+      var descEl = document.getElementById('pacDesc');
+      var ctaEl = document.getElementById('pacCta');
+      var nowEl = document.getElementById('pacNow');
+      var totalEl = document.getElementById('pacTotal');
+      var prevBtn = document.getElementById('pacPrev');
+      var nextBtn = document.getElementById('pacNext');
+
+      var n = PACOTES.length;
+      var single = n === 1;
+      section.dataset.single = single ? 'true' : 'false';
+      totalEl.textContent = ('0' + n).slice(-2);
+
+      // ângulos estáveis para as fotos de trás (efeito de deck espalhado)
+      var angles = [-7, 6, -4, 8, -6, 5];
+
+      var photos = PACOTES.map(function (p) {
+        var fig = document.createElement('figure');
+        fig.className = 'pac__photo';
+        var img = document.createElement('img');
+        img.src = p.foto;
+        img.alt = p.alt || p.nome;
+        img.loading = 'lazy';
+        fig.appendChild(img);
+        stack.appendChild(fig);
+        return fig;
+      });
+
+      var active = 0;
+
+      function layout() {
+        photos.forEach(function (el, idx) {
+          var isActive = idx === active;
+          if (isActive) {
+            el.style.transform = 'translate(0, 0) rotate(0deg) scale(1)';
+            el.style.opacity = 1;
+            el.style.zIndex = 30;
+          } else {
+            var rot = angles[idx % angles.length];
+            el.style.transform = 'translate(' + (rot > 0 ? 20 : -20) + 'px, 16px) rotate(' + rot + 'deg) scale(0.93)';
+            el.style.opacity = 0.5;
+            el.style.zIndex = 10 + idx;
+          }
+        });
+      }
+
+      function fill() {
+        var p = PACOTES[active];
+        nameEl.textContent = p.nome;
+        priceEl.textContent = p.preco;
+        descEl.textContent = p.descricao;
+        ctaEl.href = WHATS + encodeURIComponent(
+          'Olá! Quero contratar o ' + p.nome + ' na Casa Angelina. Pode me passar as datas e os valores?'
+        );
+        nowEl.textContent = ('0' + (active + 1)).slice(-2);
+      }
+
+      function go(k) {
+        active = (k % n + n) % n;            // circular nos dois sentidos
+        content.classList.add('is-swapping');
+        setTimeout(function () { fill(); content.classList.remove('is-swapping'); }, 200);
+        layout();
+      }
+
+      // primeira pintura (sem fade)
+      fill();
+      layout();
+
+      if (!single) {
+        nextBtn.addEventListener('click', function () { stopAuto(); go(active + 1); });
+        prevBtn.addEventListener('click', function () { stopAuto(); go(active - 1); });
+        // clicar numa foto de trás traz ela para a frente
+        photos.forEach(function (el, idx) {
+          el.addEventListener('click', function () { if (idx !== active) { stopAuto(); go(idx); } });
+        });
+      }
+
+      // autoplay suave; pausa no hover e após qualquer interação
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var timer = null;
+      function startAuto() {
+        if (single || reduce) return;
+        stopAuto();
+        timer = setInterval(function () { go(active + 1); }, 6500);
+      }
+      function stopAuto() { if (timer) { clearInterval(timer); timer = null; } }
+      section.addEventListener('mouseenter', stopAuto);
+      section.addEventListener('mouseleave', startAuto);
+      startAuto();
     })();
 
     /* ===== O LUGAR — mapa interativo de Trancoso (pan/zoom por setas) ===== */
