@@ -1332,7 +1332,7 @@
       .insta__grid {
         flex: none;
         grid-template-columns: 1fr 1fr;
-        grid-auto-rows: 1fr;
+        grid-auto-rows: auto;
         grid-template-rows: none;
         max-height: none;
       }
@@ -2282,9 +2282,9 @@
       var section = document.getElementById('ambientes');
       if (!section) return;
 
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) { section.classList.add('is-static'); return; }
-
+      // O efeito de zoom-parallax roda em todos os aparelhos, inclusive com
+      // "Reduzir movimento" ligado (decisão de produto: a galeria é uma seção
+      // de assinatura da home).
       var stage = section.querySelector('.zp');
       var tiles = [].slice.call(section.querySelectorAll('.zp__el')).map(function (el) {
         return { el: el, s: parseFloat(el.dataset.s) || 2.6, hx: 0, hy: 0 };
