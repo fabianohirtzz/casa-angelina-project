@@ -65,9 +65,12 @@
     /* min-height (não height:100%) para não virar container de rolagem ao
        combinar com overflow-x — senão a página trava sem rolar */
     html, body { min-height: 100%; }
-    /* trava o arrasto lateral: nada empurra a página para os lados */
-    html { overflow-x: hidden; }
-    body { overflow-x: hidden; position: relative; width: 100%; max-width: 100%; overscroll-behavior-x: none; }
+    /* trava o arrasto lateral: nada empurra a página para os lados.
+       overflow-x: clip (não hidden) — clip recorta sem virar container de
+       rolagem, então o position: sticky dos ambientes e dos cards "duas
+       formas" continua funcionando no desktop. */
+    html { overflow-x: clip; }
+    body { overflow-x: clip; position: relative; width: 100%; max-width: 100%; overscroll-behavior-x: none; }
     /* trava o scroll do corpo enquanto o menu mobile está aberto */
     body.nav-open { overflow: hidden; }
 
