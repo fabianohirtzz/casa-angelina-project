@@ -1672,6 +1672,213 @@
     }
 
     /* ============================================================
+       INSTAGRAM — galeria bento interativa (port vanilla do
+       "interactive bento gallery"). Banda clara igual aos ambientes:
+       fundo transparente revela o vídeo de fundo fixo + véu creme.
+       Grade assimétrica de 6 fotos do dia a dia da casa; clicar abre
+       um lightbox com zoom, legenda e navegação. 100vh no desktop.
+       ============================================================ */
+    .insta {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(22px, 3.4vh, 40px);
+      padding: clamp(72px, 11vh, 120px) var(--gutter) clamp(56px, 9vh, 96px);
+      background: transparent;          /* revela o vídeo de fundo */
+    }
+
+    .insta__head {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      text-align: center;
+    }
+    .insta__eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde-escuro); margin-bottom: 14px;
+    }
+    .insta__eyebrow-rule { display: block; width: 30px; height: 1px; background: var(--verde-escuro); opacity: 0.5; }
+    .insta__eyebrow a { color: inherit; text-decoration: none; }
+    .insta__eyebrow a:hover { color: var(--verde-profundo); }
+    .insta__title {
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(32px, 5vw, 60px); line-height: 1.04; color: var(--tinta);
+    }
+    .insta__title em { font-style: italic; color: var(--verde-escuro); }
+    .insta__lede {
+      font-family: var(--font-display); font-style: italic; font-weight: 400;
+      font-size: clamp(16px, 1.7vw, 20px); line-height: 1.5; color: var(--tinta-suave);
+      max-width: 46ch; margin: 12px auto 0;
+    }
+
+    /* Grade bento: 12 colunas x 2 linhas, preenchendo a altura disponível */
+    .insta__grid {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: clamp(10px, 1vw, 16px);
+      max-height: 62vh;
+    }
+
+    .insta__cell {
+      position: relative;
+      margin: 0;
+      border: none;
+      padding: 0;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--areia);
+      box-shadow: 0 18px 40px rgba(86, 115, 50, 0.14);
+      transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out);
+    }
+    .insta__cell:hover { transform: translateY(-4px); box-shadow: 0 26px 56px rgba(86, 115, 50, 0.2); }
+    .insta__cell:focus-visible { outline: 2px solid var(--verde-escuro); outline-offset: 3px; }
+    .insta__cell img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .6s var(--ease-gentle);
+    }
+    .insta__cell:hover img { transform: scale(1.06); }
+
+    /* Posições do bento (2 painéis altos nas pontas + variação no meio) */
+    .insta__cell--a { grid-column: 1 / 4;  grid-row: 1 / 3; }
+    .insta__cell--b { grid-column: 4 / 8;  grid-row: 1 / 2; }
+    .insta__cell--c { grid-column: 8 / 10; grid-row: 1 / 2; }
+    .insta__cell--d { grid-column: 10 / 13; grid-row: 1 / 3; }
+    .insta__cell--e { grid-column: 4 / 6;  grid-row: 2 / 3; }
+    .insta__cell--f { grid-column: 6 / 10; grid-row: 2 / 3; }
+
+    /* Véu + legenda + selo do Instagram, revelados no hover */
+    .insta__cell-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(20,28,12,0) 38%, rgba(20,28,12,0.62) 100%);
+      opacity: 0; transition: opacity .35s var(--ease-soft);
+    }
+    .insta__cell:hover .insta__cell-scrim,
+    .insta__cell:focus-visible .insta__cell-scrim { opacity: 1; }
+    .insta__cell-cap {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: clamp(12px, 1.4vw, 20px);
+      font-family: var(--font-display); font-style: italic;
+      font-size: clamp(14px, 1.4vw, 18px); line-height: 1.3; color: var(--off-white);
+      text-align: left;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .35s var(--ease-soft), transform .35s var(--ease-out);
+    }
+    .insta__cell:hover .insta__cell-cap,
+    .insta__cell:focus-visible .insta__cell-cap { opacity: 1; transform: none; }
+    .insta__badge {
+      position: absolute; top: 12px; right: 12px;
+      width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(245, 239, 228, 0.92); color: var(--verde-escuro);
+      box-shadow: 0 6px 16px rgba(20, 28, 12, 0.28);
+      opacity: 0; transform: scale(.8); transition: opacity .35s var(--ease-soft), transform .35s var(--ease-out);
+    }
+    .insta__cell:hover .insta__badge,
+    .insta__cell:focus-visible .insta__badge { opacity: 1; transform: none; }
+    .insta__badge svg { width: 18px; height: 18px; }
+
+    .insta__follow { text-align: center; }
+
+    /* Lightbox */
+    .insta-lb {
+      position: fixed; inset: 0; z-index: 80;
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(20px, 5vw, 64px);
+      background: rgba(20, 28, 12, 0.62);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; visibility: hidden;
+      transition: opacity .35s var(--ease-soft), visibility .35s;
+    }
+    .insta-lb.is-open { opacity: 1; visibility: visible; }
+    .insta-lb__figure {
+      position: relative; margin: 0;
+      max-width: min(960px, 100%); max-height: 86vh;
+      display: flex; flex-direction: column;
+      transform: scale(.94); transition: transform .4s var(--ease-out);
+    }
+    .insta-lb.is-open .insta-lb__figure { transform: none; }
+    .insta-lb__img {
+      width: 100%; max-height: 74vh; object-fit: contain;
+      border-radius: var(--r-md);
+      box-shadow: 0 40px 90px rgba(20, 28, 12, 0.5);
+      background: var(--verde-profundo);
+    }
+    .insta-lb__cap {
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      margin-top: 16px; color: var(--creme-sobre-escuro);
+    }
+    .insta-lb__cap-text { font-family: var(--font-display); font-style: italic; font-size: clamp(16px, 2vw, 22px); }
+    .insta-lb__link {
+      display: inline-flex; align-items: center; gap: 8px; flex: none;
+      font-family: var(--font-body); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--verde-claro); text-decoration: none; white-space: nowrap;
+    }
+    .insta-lb__link:hover { color: #fff; }
+    .insta-lb__link svg { width: 16px; height: 16px; }
+
+    .insta-lb__btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer;
+      background: rgba(245, 239, 228, 0.14); color: var(--off-white);
+      border: 1px solid rgba(208, 240, 170, 0.34);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      transition: background .2s var(--ease-soft), transform .2s var(--ease-out);
+    }
+    .insta-lb__btn:hover { background: rgba(245, 239, 228, 0.26); }
+    .insta-lb__btn--prev { left: clamp(8px, 3vw, 28px); }
+    .insta-lb__btn--next { right: clamp(8px, 3vw, 28px); }
+    .insta-lb__btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; }
+    .insta-lb__close {
+      position: absolute; top: clamp(16px, 4vw, 28px); right: clamp(16px, 4vw, 28px);
+      width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer;
+      background: rgba(245, 239, 228, 0.14); color: var(--off-white);
+      border: 1px solid rgba(208, 240, 170, 0.34);
+      transition: background .2s var(--ease-soft);
+    }
+    .insta-lb__close:hover { background: rgba(245, 239, 228, 0.26); }
+    .insta-lb__close svg { width: 22px; height: 22px; stroke: currentColor; fill: none; }
+
+    /* Mobile: bento vira grade de 2 colunas com altura automática */
+    @media (max-width: 760px) {
+      .insta { min-height: auto; padding-top: clamp(56px, 12vh, 96px); }
+      .insta__grid {
+        flex: none;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 1fr;
+        grid-template-rows: none;
+        max-height: none;
+      }
+      .insta__cell { aspect-ratio: 1 / 1; }
+      .insta__cell--a { grid-column: 1 / 3; aspect-ratio: 16 / 11; }
+      .insta__cell--b { grid-column: 1 / 2; grid-row: auto; }
+      .insta__cell--c { grid-column: 2 / 3; grid-row: auto; }
+      .insta__cell--d { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 16 / 11; }
+      .insta__cell--e { grid-column: 1 / 2; grid-row: auto; }
+      .insta__cell--f { grid-column: 2 / 3; grid-row: auto; }
+      /* legenda/selo sempre visíveis no toque */
+      .insta__cell-scrim { opacity: 1; }
+      .insta__cell-cap { opacity: 1; transform: none; }
+      .insta-lb__cap { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .insta__cell, .insta__cell img, .insta__cell-scrim, .insta__cell-cap, .insta__badge { transition: none; }
+      .insta-lb, .insta-lb__figure { transition: none; }
+    }
+
+    /* ============================================================
        AVALIAÇÕES — banda verde escuro com carrossel "stagger" de
        depoimentos (port vanilla do stagger-testimonials). Cards creme
        fanados em 3D; o ativo vem à frente. Renderizado por JS.
@@ -2322,6 +2529,96 @@
       </a>
     </div>
   </section>
+
+  <!-- ===================== INSTAGRAM — galeria bento interativa do dia a dia =====================
+       Banda clara (vídeo de fundo) entre o mapa e as avaliações. Galeria curada de fotos do
+       feed; clicar abre o lightbox. Para atualizar, troque as imagens em images/ e as legendas.
+       ============================================================ -->
+  <section class="insta" id="instagram" aria-label="Instagram da Casa Angelina">
+    <header class="insta__head reveal">
+      <p class="insta__eyebrow">
+        <span class="insta__eyebrow-rule" aria-hidden="true"></span>
+        <a href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener">@casangelinatrancoso</a>
+        <span class="insta__eyebrow-rule" aria-hidden="true"></span>
+      </p>
+      <h2 class="insta__title"><em>O dia a dia</em> da casa</h2>
+      <p class="insta__lede">Um pedaço do que se vive aqui, entre a piscina, a rede e o jardim.</p>
+    </header>
+
+    <div class="insta__grid reveal-group">
+      <button type="button" class="insta__cell insta__cell--a" style="--i:0" data-src="images/casa1.png" data-cap="A casa entre o jardim e a mata">
+        <img src="images/casa1.png" alt="Fachada da Casa Angelina vista do jardim, com caminho de pedras" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">A casa entre o jardim e a mata</span>
+      </button>
+
+      <button type="button" class="insta__cell insta__cell--b" style="--i:1" data-src="images/casa24.png" data-cap="Rede à sombra, no ritmo de Trancoso">
+        <img src="images/casa24.png" alt="Rede verde armada entre bancos de madeira sob o teto de palha" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">Rede à sombra, no ritmo de Trancoso</span>
+      </button>
+
+      <button type="button" class="insta__cell insta__cell--c" style="--i:2" data-src="images/casa14.png" data-cap="Manhãs sem pressa na varanda">
+        <img src="images/casa14.png" alt="Pés descansando na rede branca da varanda de madeira" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">Manhãs sem pressa na varanda</span>
+      </button>
+
+      <button type="button" class="insta__cell insta__cell--d" style="--i:3" data-src="images/casa18.png" data-cap="A piscina cercada de verde">
+        <img src="images/casa18.png" alt="Piscina vista por entre a folhagem do jardim" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">A piscina cercada de verde</span>
+      </button>
+
+      <button type="button" class="insta__cell insta__cell--e" style="--i:4" data-src="images/casa20.png" data-cap="O quarto que acorda para a piscina">
+        <img src="images/casa20.png" alt="Quarto com cortinas abertas para a piscina e o jardim" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">O quarto que acorda para a piscina</span>
+      </button>
+
+      <button type="button" class="insta__cell insta__cell--f" style="--i:5" data-src="images/casa15.png" data-cap="A mesa posta para o café">
+        <img src="images/casa15.png" alt="Mesa de madeira posta com louças e arranjos para o café" loading="lazy" />
+        <span class="insta__cell-scrim" aria-hidden="true"></span>
+        <span class="insta__badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+        <span class="insta__cell-cap">A mesa posta para o café</span>
+      </button>
+    </div>
+
+    <div class="insta__follow reveal">
+      <a class="btn btn--soft" href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener">
+        Seguir no Instagram
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Lightbox da galeria do Instagram -->
+  <div class="insta-lb" id="instaLightbox" role="dialog" aria-modal="true" aria-label="Foto do Instagram" hidden>
+    <button type="button" class="insta-lb__close" id="instaLbClose" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button type="button" class="insta-lb__btn insta-lb__btn--prev" id="instaLbPrev" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <figure class="insta-lb__figure">
+      <img class="insta-lb__img" id="instaLbImg" src="" alt="" />
+      <figcaption class="insta-lb__cap">
+        <span class="insta-lb__cap-text" id="instaLbCap"></span>
+        <a class="insta-lb__link" href="https://www.instagram.com/casangelinatrancoso" target="_blank" rel="noopener">
+          Ver no Instagram
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+        </a>
+      </figcaption>
+    </figure>
+    <button type="button" class="insta-lb__btn insta-lb__btn--next" id="instaLbNext" aria-label="Próxima">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
 
   <!-- ===================== AVALIAÇÕES — carrossel stagger de depoimentos =====================
        Os depoimentos são montados por JS a partir de um array (ver script "AVALIAÇÕES").
@@ -3232,6 +3529,60 @@
 
       window.addEventListener('resize', layout, { passive: true });
       layout();
+    })();
+
+    /* ===== INSTAGRAM — lightbox da galeria bento ===== */
+    (function () {
+      var lb = document.getElementById('instaLightbox');
+      if (!lb) return;
+      var cells = Array.prototype.slice.call(document.querySelectorAll('.insta__cell'));
+      if (!cells.length) return;
+
+      var imgEl = document.getElementById('instaLbImg');
+      var capEl = document.getElementById('instaLbCap');
+      var btnClose = document.getElementById('instaLbClose');
+      var btnPrev = document.getElementById('instaLbPrev');
+      var btnNext = document.getElementById('instaLbNext');
+      var current = 0;
+      var lastFocus = null;
+
+      function show(i) {
+        current = (i + cells.length) % cells.length;
+        var cell = cells[current];
+        imgEl.src = cell.getAttribute('data-src');
+        imgEl.alt = cell.querySelector('img') ? cell.querySelector('img').alt : '';
+        capEl.textContent = cell.getAttribute('data-cap') || '';
+      }
+      function open(i) {
+        lastFocus = document.activeElement;
+        show(i);
+        lb.hidden = false;
+        // força reflow para a transição de entrada
+        void lb.offsetWidth;
+        lb.classList.add('is-open');
+        document.body.classList.add('nav-open'); // trava o scroll do corpo
+        btnClose.focus();
+      }
+      function close() {
+        lb.classList.remove('is-open');
+        document.body.classList.remove('nav-open');
+        window.setTimeout(function () { lb.hidden = true; imgEl.src = ''; }, 360);
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      cells.forEach(function (cell, i) {
+        cell.addEventListener('click', function () { open(i); });
+      });
+      btnPrev.addEventListener('click', function () { show(current - 1); });
+      btnNext.addEventListener('click', function () { show(current + 1); });
+      btnClose.addEventListener('click', close);
+      lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+      document.addEventListener('keydown', function (e) {
+        if (lb.hidden) return;
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowLeft') show(current - 1);
+        else if (e.key === 'ArrowRight') show(current + 1);
+      });
     })();
   </script>
 </body>
