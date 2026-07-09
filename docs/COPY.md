@@ -118,6 +118,9 @@ Onde o dado ainda não existe, fica `[definir]` (lista completa no fim, seção 
 - **Título:** Bem _avaliada_ por quem chega
 - **Corpo:** Comodidades com nota 9,3 e 8,9 para viagem a dois no Booking. Casais e famílias
   destacam a localização e o contato com a natureza.
+- `[Nota]` Avaliação não é portável: as notas do Booking ficam no Booking. Selo do **Google** no
+  site só **depois** que o perfil tiver reviews (hoje zerado). Por ora, prova social usa o texto
+  das notas do Booking (decisão do cliente sobre exibir) + depoimentos. (TripAdvisor descartado.)
 
 ### 1.9 Instagram strip
 - **Eyebrow:** NO DIA A DIA

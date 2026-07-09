@@ -8,6 +8,11 @@ transcrição da reunião (timestamps citados).
 > GitHub Pages. Este documento define **escopo e funcionalidades** para guiar a escolha de
 > ferramenta e a construção. Ainda não define stack técnica nem implementa nada.
 
+> **Atualização 2026-06-24:** channel manager definido = **Smoobu** (Beds24 descartada);
+> **TripAdvisor descartado** pelo cliente (não entra como canal); **pagamento = sinal online
+> (PIX) + resto no check-in** (APP Max descartada; gateway tendendo Mercado Pago/PagSeguro).
+> Tarifas e condições dos 4 quartos extraídas em `docs/TARIFAS.md`.
+
 ## 1. Objetivo do painel
 
 Central única de gestão dos donos. Quatro metas de negócio que tudo serve:
@@ -93,9 +98,21 @@ Painel Casa Angelina
 
 ### 4.7 Avaliações — (15:55)
 - **Disparo automático** de pedido de avaliação por e-mail ao fim da estadia.
-- Direcionamento preferencial ao **Google Meu Negócio**; opção também para o site.
-- Acompanhar status (enviado, respondido).
-- Meta: tentar consolidar avaliações de mais de um canal para otimizar visibilidade.
+- **Avaliação não é portável entre plataformas.** Cada plataforma só mostra avaliação escrita
+  dentro dela; não existe API que importe review do Booking para Google/TripAdvisor/Airbnb.
+  Copiar o texto e postar como se fosse o hóspede é fraude (derruba/pune o perfil). O caminho é
+  **pedir ao hóspede real** que avalie nos perfis novos.
+- **Quem pode avaliar muda por plataforma** (define a estratégia de coleta):
+  - Booking / Airbnb: só quem reservou por eles (review verificada por reserva).
+  - **Google Meu Negócio**: qualquer pessoa com conta Google, sem reserva. Mais fácil de
+    encher e **prioritário para ranqueamento**.
+- Estado atual dos perfis: Booking tem avaliações (Comodidades 9,3 / casais 8,9); Google e Airbnb
+  estão **zerados** (perfis novos). TripAdvisor descartado pelo cliente.
+- Estratégia: o painel dispara o pedido com **link direto do Google** para os hóspedes anteriores
+  (começando pelos que já avaliaram bem no Booking).
+- Acompanhar status (enviado, respondido) por canal.
+- O selo/widget de avaliação só vai ao site **depois** que o perfil tiver nota (ex.: 5 a 10
+  reviews); perfil zerado no site passa desconfiança.
 
 ### 4.8 Conteúdo do site (autonomia) — (09:24)
 - Editar **fotos** (galeria, ambientes, hero) sem mexer em código.
@@ -104,7 +121,7 @@ Painel Casa Angelina
 - Publicar mudanças refletindo no site.
 
 ### 4.9 Pagamentos e financeiro — (05:03)
-- Pagamento direto integrado (Mercado Pago / PagSeguro / **APP Max**, ~3,9%).
+- Pagamento direto integrado (Mercado Pago / PagSeguro, ~3,9%): sinal online + resto no check-in.
 - **Trava de disponibilidade:** o pagamento direto só fecha data efetivamente bloqueada no
   calendário único, para nunca gerar overbooking (ressalva técnica da reunião).
 - Registro de valor, taxa e status por reserva.
@@ -112,12 +129,16 @@ Painel Casa Angelina
 - Controle do custo recorrente do channel manager.
 
 ### 4.10 Integrações (canais) — (03:01, 23:37, 22:49)
-- Conexão com **Airbnb** e **Booking** via channel manager.
-- Status da sincronização e log de bloqueios.
-- Conexões de pagamento (provedor).
-- Google Meu Negócio (avaliações).
-- Tags de Google Analytics e Search Console; alinhamento de IDs de tracking (Google/Meta) do
-  cliente.
+Esta tela **não é um formulário de chaves de Booking/Airbnb** (eles não entregam chave ao dono;
+ver 7.2). É um **dashboard de status com semáforos e botões de "Conectar"/autorizar**:
+- **Channel manager** (núcleo, = Smoobu): 1 token/conta. Destrava Airbnb + Booking de uma vez.
+- Status por canal com semáforo: `conectado` / `desconectado` / `erro`, e log de bloqueios.
+- Botão "Conectar" que leva o cliente direto ao fluxo de autorização (OAuth/extranet) quando
+  o canal estiver desconectado. O cliente **autoriza**, não cola chave.
+- **Gateway de pagamento**: access token (Mercado Pago / PagSeguro). Status ativo/inativo.
+- **Google**: ID do Analytics, Search Console, link do Meu Negócio.
+- **Links públicos** (só para os CTAs do site, sem segredo): Instagram, Booking, Airbnb.
+- O painel **mostra status, nunca o valor das chaves** (mascaradas/criptografadas; ver 7.4).
 
 ### 4.11 Relatórios
 - Ocupação por período, receita por canal, taxa média, ticket médio.
@@ -155,7 +176,7 @@ temporada e pacotes → 4. Pagamento direto (~3,9%) → 5. Data bloqueada no sit
 | Entidade | Campos principais | Observações |
 |---|---|---|
 | **Propriedade** | id, nome, descrição, endereço, comodidades, políticas, fotos | Multi-propriedade desde o início. |
-| **Quarto/Suíte** | id, propriedade_id, nome, capacidade, camas, comodidades | Casa sempre inteira (4 dormitórios), não vendidos avulsos. |
+| **Quarto/Suíte** | id, propriedade_id, nome, capacidade, camas, comodidades | 4 quartos vendidos individualmente; casa inteira no Réveillon/Carnaval (ver `TARIFAS.md`). |
 | **Tarifa** | id, propriedade_id, período/temporada, valor diária, mínimo de noites | Preço por temporada. |
 | **Disponibilidade** | data, propriedade_id, status, origem | Sincronizada bidirecionalmente. |
 | **Reserva** | id, propriedade_id, hóspede_id, check-in, check-out, pessoas, canal, valor, status, pacotes, observações | CRUD manual + automático. |
@@ -167,19 +188,75 @@ temporada e pacotes → 4. Pagamento direto (~3,9%) → 5. Data bloqueada no sit
 
 ## 7. Integrações externas
 
+### 7.1 Mapa de integrações
+
 | Integração | Função | Status |
 |---|---|---|
-| Channel manager | Sincroniza Airbnb + Booking + site (núcleo) | Ferramenta a definir (mensalidade). |
+| Channel manager (**Smoobu**) | Sincroniza Airbnb + Booking + site (núcleo) | **Definido: Smoobu** (Beds24 descartada). |
 | Airbnb | Canal + sincronização | Cadastro a regularizar (nome/telefone/código). |
-| Booking | Canal + sincronização | Conta existente. |
-| Mercado Pago / PagSeguro / APP Max | Pagamento direto ~3,9% | APP Max recomendada. |
-| Google Meu Negócio | Avaliações (preferencial) | Otimizar perfil. |
+| Booking | Canal + sincronização | Conta existente (tem avaliações). ID propriedade `10779110`. |
+| Mercado Pago / PagSeguro | Sinal online (~3,9%) + maquininha no check-in | A escolher; APP Max descartada. |
+| Google Meu Negócio | Avaliações (preferencial) | Perfil novo, otimizar e encher. |
 | Google Analytics + Search Console | Métricas e SEO | Tags por Fabiano. |
 | Meta API / Google Ads | Tracking de anúncios | Tracking pelo cliente; alinhar IDs. |
 
-## 8. Decisões técnicas em aberto
-- Escolha do **channel manager** (custo mensal x autonomia).
-- Escolha do **provedor de pagamento** (APP Max recomendada).
+### 7.2 Como conectam (arquitetura) — decisão tomada
+
+**OTAs não dão chave de API para o dono.** Booking e Airbnb só liberam conectividade para
+**parceiros certificados** (channel managers/PMS). Airbnb fechou a API pública; Booking exige
+programa de certificação. Virar parceiro direto é inviável para a operação. Logo:
+
+- **Não existe "campo de chave do Booking/Airbnb" no painel** — não há chave para o dono colar.
+- Quem segura as conexões com as OTAs é **o channel manager**. O painel fala com **uma coisa
+  só**: a API do channel manager (1 token por cliente) + o gateway de pagamento (1 chave).
+- A conexão de cada OTA é feita por **autorização do dono** (OAuth/handshake no extranet da
+  própria conta dele), uma vez, não por chave copiada. É clicar em "autorizar".
+
+```
+Painel  ──API──►  Channel Manager (Smoobu)  ──conectividade──►  Booking
+                                            ──conectividade──►  Airbnb
+Painel  ──API──►  Gateway de pagamento (Mercado Pago / PagSeguro)
+```
+
+**TripAdvisor descartado pelo cliente (2026-06-24)** — não entra como canal de venda.
+
+### 7.3 Painel replicável (template para o nicho)
+
+O painel nasce para ser **copiado para outros clientes do mesmo nicho** (pousadas/temporada):
+
+- **Padronizar UM channel manager** para todos os clientes: **Smoobu** (Beds24 testada e
+  descartada por onboarding falho). O template integra **uma vez** contra a API dele + um gateway.
+- **Abstrair atrás de uma interface de provider** (ex.: `ChannelManager.getCalendar()`,
+  `.blockDates()`), para trocar de ferramenta depois sem reescrever o painel.
+- **Onboarding de cliente novo:** (1) criar a conta dele no channel manager; (2) fazer com ele
+  as autorizações de Booking/Airbnb (por chamada de tela); (3) colar token do
+  channel manager + chaves do gateway nas configurações; (4) no ar com o mesmo código.
+- Objetivo de facilidade: o cliente quase não toca em chave. O provisionamento inicial é seu;
+  o que exige o cliente é só o clique de **autorizar** na conta dele (não dá para fazer por ele).
+
+### 7.4 Segurança das credenciais (regra dura)
+
+- **Nenhuma chave/secret no site estático** (subprojeto A). Token de channel manager e gateway
+  são backend (subprojeto B). O site de apresentação carrega apenas **links públicos**.
+- **Secrets criptografados no servidor**, nunca expostos no front. O painel mostra **status**,
+  não o valor da chave (mascarado).
+
+## 8. Decisões técnicas
+
+### Tomadas
+- **Arquitetura de integrações:** painel fala só com o channel manager (1 token) + gateway
+  (1 chave); sem campo de chave de OTA; OTAs conectadas por autorização do dono (ver 7.2).
+- **Painel replicável:** padronizar um channel manager e abstrair atrás de interface de
+  provider; integrações viram dashboard de status, não formulário de chaves (ver 7.3).
+- **Segurança:** nenhum secret no site estático; secrets criptografados no servidor (ver 7.4).
+- **Channel manager:** **Smoobu** (Beds24 testada e descartada por onboarding falho).
+- **TripAdvisor descartado** pelo cliente.
+- **Pagamento:** sinal online (PIX obrigatório) + resto no check-in (maquininha/PIX presencial);
+  o split é lógica do painel, não do gateway. APP Max descartada.
+
+### Em aberto
+- **% do sinal** a cobrar online; PIX via Smoobu+Stripe (curto prazo) x Mercado Pago no painel próprio.
+- Escolha final do **gateway** (Mercado Pago x PagSeguro).
 - Stack e hospedagem do painel (fora do GitHub Pages).
 - Fluxo de pagamento que respeite a trava de disponibilidade.
 
@@ -189,8 +266,9 @@ temporada e pacotes → 4. Pagamento direto (~3,9%) → 5. Data bloqueada no sit
 - Cliente ciente para planejamento financeiro.
 
 ## 10. Sequência sugerida de construção
-1. Regularizar acessos (Airbnb, Google Meu Negócio).
-2. Escolher channel manager e provedor de pagamento.
+1. Regularizar acessos (Airbnb, Google Meu Negócio) e iniciar coleta de avaliações no Google
+   com os hóspedes anteriores.
+2. Configurar o channel manager (Smoobu) e escolher o gateway (Mercado Pago x PagSeguro).
 3. Modelar dados multi-propriedade.
 4. Calendário único + sincronização bidirecional.
 5. Tarifas por temporada + reservas/hóspedes (CRUD).

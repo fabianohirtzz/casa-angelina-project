@@ -27,6 +27,9 @@ Legenda: `[CONFIRMADO]` validado pelo cliente · `[BOOKING]` extraído do anúnc
 - **Instagram:** @casangelinatrancoso — https://www.instagram.com/casangelinatrancoso `[CONFIRMADO]`
 - **Booking:** https://www.booking.com/hotel/br/casa-angelina.pt-br.html `[CONFIRMADO]`
 - **Airbnb:** `[A CONFIRMAR]` cadastro com nome incorreto, em ajuste pelo cliente.
+- **TripAdvisor:** **descartado pelo cliente** `[CONFIRMADO 2026-06-24]` — não entra como canal de
+  venda nem integração. (Perfil existe, zerado de avaliações; sem ação prevista.)
+- **Google Meu Negócio:** perfil novo, zerado de avaliações. `[CONFIRMADO]`
 - **E-mail:** `[FALTA]`
 
 ## 3. Localização e distâncias `[BOOKING / OpenStreetMap]`
@@ -92,15 +95,23 @@ Extintores · CCTV nas áreas comuns e externas · Alarme · Chave de acesso · 
 - **Sem restrição de idade** para o check-in.
 - **Pets:** não permitidos.
 - **Pedidos especiais:** aceitos, avaliados caso a caso.
-- **Cancelamento / pré-pagamento:** varia conforme datas e opção. `[FALTA]` definir política
-  a exibir no site direto.
+- **Cancelamento / pré-pagamento:** varia conforme datas e opção. `[FALTA]` definir política limpa
+  a exibir no site direto. Base no Booking: plano flexível/"não reembolsável" + "alavancagem" 67%
+  (ver `docs/TARIFAS.md`).
 
-## 8. Avaliações (Booking) `[BOOKING]`
-- Comodidades: 9,3.
-- Viagem a dois (casais): 8,9.
-- Destaques: localização, contato com a natureza, ideal para famílias e passeios.
-- `[A CONFIRMAR]` se podem ser exibidas no site próprio. Preferência do cliente: migrar
-  avaliações para o Google Meu Negócio (melhora ranqueamento).
+## 8. Avaliações
+- **Booking** `[BOOKING]`: Comodidades 9,3 · Viagem a dois (casais) 8,9. Destaques: localização,
+  contato com a natureza, ideal para famílias e passeios.
+- **Google Meu Negócio e Airbnb:** perfis novos, **zerados de avaliações**. TripAdvisor descartado.
+- **Avaliação não é portável.** Cada plataforma só mostra review escrita dentro dela; não há API
+  que importe do Booking para Google/TripAdvisor. Copiar e postar como hóspede é fraude. O
+  caminho é **pedir aos hóspedes reais** que avaliem nos perfis novos. `[CONFIRMADO]`
+- **Quem pode avaliar:** Booking/Airbnb só quem reservou por eles; **Google aceita qualquer
+  hóspede, sem reserva pela plataforma** — por isso dá para usar os mesmos hóspedes do Booking
+  para encher o Google. `[CONFIRMADO]`
+- **Plano:** disparo automático por e-mail com link direto do **Google** (preferência do cliente,
+  melhora ranqueamento). Selo/widget no site só **após** o perfil ter nota (5 a 10 reviews).
+  `[CONFIRMADO]`
 
 ## 9. Pacotes e serviços
 - Já existem: café da manhã incluso; pacotes de alta temporada (réveillon, carnaval, feiras). `[CONFIRMADO]`
@@ -124,11 +135,26 @@ Extintores · CCTV nas áreas comuns e externas · Alarme · Chave de acesso · 
 
 ## 12. Operação e técnico
 - Reservas diretas integradas com Airbnb e Booking, bloqueio bidirecional de datas. `[CONFIRMADO]`
-- Channel manager com mensalidade (ferramenta a definir). `[CONFIRMADO necessidade]`
-- Pagamento direto ~3,9% (Mercado Pago / PagSeguro / APP Max recomendada) vs 15% Airbnb /
-  18% Booking. `[CONFIRMADO]`
+  **TripAdvisor descartado** pelo cliente (2026-06-24).
+- **Channel manager: Smoobu** `[DECIDIDO 2026-06-24]` (Beds24 testada e descartada por onboarding
+  falho). API + webhooks, conexão oficial Airbnb/Booking. Tarifas dos 4 quartos extraídas em
+  `docs/TARIFAS.md`.
+- **Arquitetura de integrações `[DECIDIDO 2026-06-24]`:** OTAs não dão chave de API ao dono; quem
+  segura as conexões é o channel manager. O painel fala só com o channel manager (1 token) + o
+  gateway (1 chave); **não tem campo de chave de OTA**; cada canal é conectado por autorização do
+  dono (OAuth/extranet). Detalhes em `PAINEL.md` 7.2–7.4.
+- **Painel replicável:** desenhado para copiar a outros clientes do nicho — padronizar um channel
+  manager e abstrair atrás de interface de provider. `[DECIDIDO 2026-06-24]`
+- **Segurança:** nenhum secret no site estático; secrets criptografados no servidor; painel
+  mostra status, não o valor das chaves. `[DECIDIDO 2026-06-24]`
+- **Pagamento `[DECIDIDO 2026-06-24]`:** **sinal online** (PIX obrigatório; % a confirmar) +
+  **restante no check-in** (maquininha/cartão ou PIX presencial). Split é lógica do painel/motor de
+  reservas, não do gateway. **APP Max descartada** (não atende). Gateway tendendo **Mercado Pago**
+  ou **PagSeguro** (online + maquininha numa conta); Stripe via Smoobu como opção de curto prazo.
+  Cliente tem CNPJ. Reduz para ~3,9% vs 15% Airbnb / 18% Booking.
 - Preços por temporada / diária variável no painel. `[CONFIRMADO]`
-- Avaliações: pedido automático por e-mail ao fim da estadia → Google Meu Negócio. `[CONFIRMADO]`
+- Avaliações: pedido automático por e-mail ao fim da estadia → **Google Meu Negócio**. Avaliação
+  não é portável; coletar com hóspedes reais. TripAdvisor descartado. `[CONFIRMADO]`
 - SEO entregue pronto; tags Google Analytics + Search Console por Fabiano; tracking de anúncios
   (Google/Meta) pelo cliente. `[CONFIRMADO]`
 - Acessos a regularizar: Airbnb (nome/telefone/código), Google Meu Negócio (otimizar). `[CONFIRMADO]`
@@ -139,8 +165,15 @@ Extintores · CCTV nas áreas comuns e externas · Alarme · Chave de acesso · 
   Pendente SSL/HTTPS (cPanel → AutoSSL).
 
 ## 14. Pendências consolidadas
-**Falta o cliente fornecer:** datas exatas de Réveillon/Carnaval (casa só inteira) · preços
-(por quarto e casa inteira) · valores/itens dos pacotes · endereço e pin do mapa · e-mail de
-contato · política de cancelamento · texto institucional/história da casa · ensaio fotográfico
-e drone · metragem do Quarto Duplo.
-**Decisões em aberto:** link/nome do Airbnb · nome da igreja · uso das notas do Booking.
+**Falta o cliente fornecer:** intervalos de cada temporada · datas exatas de Réveillon/Carnaval
+(casa só inteira) e **preço da casa inteira** · **% do sinal** · gateway final (Mercado Pago x
+PagSeguro) · valores/itens dos pacotes · endereço e pin do mapa · e-mail de contato · política de
+cancelamento · texto institucional/história da casa · ensaio fotográfico e drone · metragem do
+Quarto Duplo · confirmar taxa de limpeza e imposto municipal/turismo · confirmar 3ª pessoa do Triplo.
+(Diárias por quarto e condições de reserva já extraídas do Booking — ver `docs/TARIFAS.md`.)
+**Decisões em aberto:** link/nome do Airbnb · nome da igreja.
+**Decisões tomadas (2026-06-24):** arquitetura de integrações via channel manager (sem campo de
+chave de OTA) · painel replicável · **channel manager = Smoobu** (Beds24 descartada) ·
+**TripAdvisor descartado** pelo cliente · **pagamento = sinal online (PIX) + resto no check-in**,
+APP Max descartada, gateway tendendo Mercado Pago/PagSeguro · avaliação não é portável, coletar
+com hóspedes reais no Google.
