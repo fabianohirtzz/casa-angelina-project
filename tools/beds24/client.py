@@ -4,10 +4,11 @@ from auth import BASE_URL
 
 
 class Beds24Client:
-    def __init__(self, token, http=requests, sleep=time.sleep):
+    def __init__(self, token, http=requests, sleep=time.sleep, max_pages=1000):
         self.token = token
         self.http = http
         self.sleep = sleep
+        self.max_pages = max_pages
 
     def _headers(self):
         return {"token": self.token}
@@ -31,6 +32,11 @@ class Beds24Client:
         out = []
         page = 1
         while True:
+            if page > self.max_pages:
+                raise RuntimeError(
+                    f"Beds24 get_bookings excedeu max_pages={self.max_pages} "
+                    "(possivel loop de paginacao)"
+                )
             p = dict(params)
             p["page"] = page
             resp = self.http.get(f"{BASE_URL}/bookings", headers=self._headers(),

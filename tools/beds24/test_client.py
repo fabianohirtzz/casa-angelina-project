@@ -1,3 +1,5 @@
+import pytest
+
 import auth
 from client import Beds24Client
 
@@ -59,6 +61,22 @@ def test_get_bookings_stops_when_page_empty():
     c = Beds24Client("acc", http=http)
     got = c.get_bookings()
     assert [b["id"] for b in got] == [10]
+
+
+def test_get_bookings_page_cap_prevents_infinite_loop():
+    # http fake que SEMPRE devolve dados + nextPageExists=True (nunca termina
+    # pelo caminho normal); prova que o cap de seguranca interrompe o loop.
+    class AlwaysMoreHttp:
+        def get(self, url, headers=None, params=None, timeout=None):
+            return FakeResp({
+                "success": True,
+                "pages": {"nextPageExists": True, "nextPageLink": "x"},
+                "data": [{"id": 1}],
+            })
+
+    c = Beds24Client("acc", http=AlwaysMoreHttp(), max_pages=3)
+    with pytest.raises(RuntimeError):
+        c.get_bookings()
 
 
 def test_rate_limit_sleeps_when_exhausted():
