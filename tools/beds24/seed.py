@@ -41,12 +41,13 @@ def seed_property_and_rooms(cur, property_payload, room_map=None):
         room_map = CASA_ANGELINA_ROOM_MAP
     beds24_property_id = str(property_payload["id"])
     name = property_payload.get("name") or "Casa Angelina"
+    slug = "prop-" + beds24_property_id
     cur.execute(
         "insert into casa_angelina.properties (beds24_property_id,name,slug) "
-        "values (%s,%s,'casa-angelina') "
+        "values (%s,%s,%s) "
         "on conflict (beds24_property_id) do update set name=excluded.name, updated_at=now() "
         "returning id",
-        (beds24_property_id, name),
+        (beds24_property_id, name, slug),
     )
     property_id = cur.fetchone()[0]
 
