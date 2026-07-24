@@ -69,9 +69,13 @@ Não é estático; depende de ferramenta de sincronização (channel manager) co
 Itens levantados no briefing:
 - **Reservas diretas integradas** com Airbnb e Booking, com **bloqueio automático de datas** nos
   dois sentidos (site ↔ plataformas) para evitar overbooking. **TripAdvisor descartado** pelo cliente.
-- **Channel manager: Smoobu** (decidido 2026-06-24). Beds24 foi testada e descartada (onboarding
-  falho). Smoobu tem API documentada + webhooks, conexão oficial com Airbnb e Booking, e cadastro
-  self-service. Tarifas dos 4 quartos já extraídas do Booking em `docs/TARIFAS.md`.
+- **Channel manager: Beds24** (decidido 2026-07-24, revertendo a escolha da Smoobu). Motivo:
+  **custo** — Beds24 fica em ~R$200/mês contra ~R$400/mês da Smoobu. Cadastro concluído; Airbnb
+  já conectado (botão de OAuth no painel) e **Booking conectado, aguardando aceite da Beds24**
+  (o Booking se autoriza pelo Extranet → Connectivity provider, não por botão na Beds24). Beds24
+  tem API v2 documentada + webhooks e conexão com Airbnb e Booking. Tarifas dos 4 quartos já
+  extraídas do Booking em `docs/TARIFAS.md`. (Smoobu foi a escolha anterior 2026-06-24, trocada
+  por preço.)
 - **Arquitetura de integrações (decidida 2026-06-24):** OTAs não dão chave de API ao dono; quem
   segura as conexões é o **channel manager**. O painel fala só com o channel manager (1 token) +
   gateway (1 chave); **sem campo de chave de OTA**; cada canal é conectado por **autorização do
@@ -82,7 +86,7 @@ Itens levantados no briefing:
   obrigatório; % a confirmar) + **restante no check-in** (maquininha/cartão ou PIX presencial). O
   split é lógica do painel/motor de reservas, não do gateway. **APP Max descartada** (não atende);
   gateway tendendo a **Mercado Pago** ou **PagSeguro** (online + maquininha numa conta); Stripe via
-  Smoobu como opção de curto prazo. Cliente tem CNPJ. Reduz para ~3,9% vs ~15% Airbnb / ~18% Booking.
+  channel manager como opção de curto prazo. Cliente tem CNPJ. Reduz para ~3,9% vs ~15% Airbnb / ~18% Booking.
 - **Painel único:** calendário consolidado, gestão de hóspedes, preços por temporada/diária
   variável, fotos, pets/políticas — com treinamento e vídeos tutoriais.
 - **Hóspedes & avaliações:** CRUD de reservas; pedido de avaliação automático por e-mail ao fim
@@ -94,11 +98,18 @@ Itens levantados no briefing:
 ## Hospedagem & repositório
 - **Preview (durante o desenvolvimento):** **GitHub Pages** — https://fabianohirtzz.github.io/casa-angelina-project/
   - Fluxo: **commitar sempre** para visualizar as alterações no Pages. Preview com `noindex`.
-- **Host final (só após aprovação do cliente):** **ErEhost** (cliente). Página de manutenção
-  já publicada em `http://casaangelina.com.br` (2026-06-19).
-  - FTP: host `ftp.casaangelina.com.br`, login cai direto na `public_html`.
+- **Host final:** **ErEhost** (cliente). Página de manutenção pública em `http://casaangelina.com.br`.
+  - **Site real já publicado (2026-07-24)** em `http://casaangelina.com.br/preview/`, **protegido
+    por senha** (.htaccess basic auth). A **manutenção segue como `index.html` público** no root; o
+    site real fica trancado na subpasta `/preview/` até aprovação do cliente. Login do preview: usuário
+    `casa` (senha fora do git — ver quem tem acesso; hash em `.deploy/preview.htpasswd`, local only).
+  - **Deploy:** `bash deploy.sh` (páginas+css+js+images) ou `--with-videos` (inclui vídeos). Envia por
+    **allowlist** para `/preview/` — nunca sobe `docs/`, `*.md`, `qa-*`, `.git`, `manutencao.html`.
+    Credenciais FTP em **`.ftpauth`** (LOCAL ONLY, gitignored, nunca vai ao FTP). Senha temporária,
+    será trocada pelo cliente. FTP: `ftp.casaangelina.com.br`, login cai direto na `public_html`.
   - Pendente: **SSL/HTTPS** (cPanel → SSL/TLS Status → Run AutoSSL). HTTPS hoje dá falha de certificado.
-- **Repo:** https://github.com/fabianohirtzz/casa-angelina-project.git (conta `fabianohirtzz`).
+- **Repo:** https://github.com/fabianohirtzz/casa-angelina-project.git (conta `fabianohirtzz`, **público**
+  — nunca commitar segredos; senhas ficam só em arquivos gitignored).
 
 ## Integrações
 - CTAs: Booking, Instagram, WhatsApp (Airbnb a confirmar). **TripAdvisor descartado pelo cliente.**
@@ -118,10 +129,15 @@ Sem travessões, sem emojis, números concretos, português do Brasil.
 2. **Só depois de aprovado pelo cliente**, subir na ErEhost (FTP / `public_html`).
 
 ## Estado atual
-- **Fase:** Design → Copy/conteúdo do **site de apresentação** (subprojeto A) mapeada. Briefing
-  consolidado, nova paleta e dados do Booking registrados.
-- **Entregue:** página de manutenção (one-page, vídeo de fundo, CTAs, `noindex`) no GitHub Pages
-  e na ErEhost.
+- **Fase:** **Site de apresentação (subprojeto A) PRONTO e publicado** (preview protegido na
+  ErEhost). Foco agora migra para o **motor de reservas & gestão — o painel (subprojeto B)**.
+- **Entregue:** página de manutenção (pública no root) + **site multi-página completo** (12 páginas,
+  galeria, vídeos) publicado em `casaangelina.com.br/preview/` (basic auth) e no GitHub Pages.
+- **Próximo (subprojeto B):** construir o painel. **Banco = Supabase**, no **projeto Supabase
+  compartilhado do HD360** (mesmo padrão de outros projetos). Channel manager = **Beds24** (API v2;
+  Airbnb conectado, Booking aguardando aceite). Ao iniciar o desenho do painel, usar a skill de
+  brainstorming (é trabalho de arquitetura/criação). Beds24 não pode expor token em front estático →
+  integração/segredos ficam em backend (ex.: Supabase Edge Functions) + UI estática.
 - **Docs de conteúdo:** `docs/INFORMACOES.md` (dossiê de fatos), `docs/COPY.md` (copy completa
   das 7 páginas), `docs/PAINEL.md` (desenho funcional do subprojeto B), `docs/TARIFAS.md` (tarifas
   e condições extraídas do Booking).
@@ -129,7 +145,8 @@ Sem travessões, sem emojis, números concretos, português do Brasil.
   hospedagem **quartos individuais + casa inteira no Réveillon/Carnaval ou reservando tudo**
   (até 12 pessoas); WhatsApp confirmado (+55 73 99961-9953); **arquitetura de integrações via
   channel manager** (sem campo de chave de OTA, dashboard de status); **painel replicável**;
-  **channel manager = Smoobu** (Beds24 descartada); **TripAdvisor descartado** pelo cliente;
+  **channel manager = Beds24** (por custo ~R$200/mês vs ~R$400 da Smoobu; decidido 2026-07-24);
+  **TripAdvisor descartado** pelo cliente;
   **pagamento = sinal online (PIX) + resto no check-in**, APP Max descartada, gateway tendendo
   Mercado Pago/PagSeguro (decidido 2026-06-24).
 - **Decisões em aberto:** intervalos de cada temporada; datas exatas de Réveillon/Carnaval e

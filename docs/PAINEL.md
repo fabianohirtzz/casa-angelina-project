@@ -8,10 +8,12 @@ transcrição da reunião (timestamps citados).
 > GitHub Pages. Este documento define **escopo e funcionalidades** para guiar a escolha de
 > ferramenta e a construção. Ainda não define stack técnica nem implementa nada.
 
-> **Atualização 2026-06-24:** channel manager definido = **Smoobu** (Beds24 descartada);
-> **TripAdvisor descartado** pelo cliente (não entra como canal); **pagamento = sinal online
-> (PIX) + resto no check-in** (APP Max descartada; gateway tendendo Mercado Pago/PagSeguro).
-> Tarifas e condições dos 4 quartos extraídas em `docs/TARIFAS.md`.
+> **Atualização 2026-07-24:** channel manager definido = **Beds24** (~R$200/mês), revertendo a
+> Smoobu (~R$400/mês) por **custo**. Cadastro concluído; Airbnb conectado, Booking conectado
+> aguardando aceite da Beds24. Beds24 tem API v2 documentada + webhooks. **TripAdvisor descartado**
+> pelo cliente (não entra como canal); **pagamento = sinal online (PIX) + resto no check-in**
+> (APP Max descartada; gateway tendendo Mercado Pago/PagSeguro). Tarifas e condições dos 4 quartos
+> extraídas em `docs/TARIFAS.md`.
 
 ## 1. Objetivo do painel
 
@@ -131,7 +133,7 @@ Painel Casa Angelina
 ### 4.10 Integrações (canais) — (03:01, 23:37, 22:49)
 Esta tela **não é um formulário de chaves de Booking/Airbnb** (eles não entregam chave ao dono;
 ver 7.2). É um **dashboard de status com semáforos e botões de "Conectar"/autorizar**:
-- **Channel manager** (núcleo, = Smoobu): 1 token/conta. Destrava Airbnb + Booking de uma vez.
+- **Channel manager** (núcleo, = Beds24): 1 token/conta (API v2). Destrava Airbnb + Booking de uma vez.
 - Status por canal com semáforo: `conectado` / `desconectado` / `erro`, e log de bloqueios.
 - Botão "Conectar" que leva o cliente direto ao fluxo de autorização (OAuth/extranet) quando
   o canal estiver desconectado. O cliente **autoriza**, não cola chave.
@@ -192,7 +194,7 @@ temporada e pacotes → 4. Pagamento direto (~3,9%) → 5. Data bloqueada no sit
 
 | Integração | Função | Status |
 |---|---|---|
-| Channel manager (**Smoobu**) | Sincroniza Airbnb + Booking + site (núcleo) | **Definido: Smoobu** (Beds24 descartada). |
+| Channel manager (**Beds24**) | Sincroniza Airbnb + Booking + site (núcleo) | **Definido: Beds24** (~R$200/mês; trocou a Smoobu por custo, 2026-07-24). Airbnb conectado; Booking aguardando aceite. |
 | Airbnb | Canal + sincronização | Cadastro a regularizar (nome/telefone/código). |
 | Booking | Canal + sincronização | Conta existente (tem avaliações). ID propriedade `10779110`. |
 | Mercado Pago / PagSeguro | Sinal online (~3,9%) + maquininha no check-in | A escolher; APP Max descartada. |
@@ -213,7 +215,7 @@ programa de certificação. Virar parceiro direto é inviável para a operação
   própria conta dele), uma vez, não por chave copiada. É clicar em "autorizar".
 
 ```
-Painel  ──API──►  Channel Manager (Smoobu)  ──conectividade──►  Booking
+Painel  ──API──►  Channel Manager (Beds24)  ──conectividade──►  Booking
                                             ──conectividade──►  Airbnb
 Painel  ──API──►  Gateway de pagamento (Mercado Pago / PagSeguro)
 ```
@@ -224,8 +226,8 @@ Painel  ──API──►  Gateway de pagamento (Mercado Pago / PagSeguro)
 
 O painel nasce para ser **copiado para outros clientes do mesmo nicho** (pousadas/temporada):
 
-- **Padronizar UM channel manager** para todos os clientes: **Smoobu** (Beds24 testada e
-  descartada por onboarding falho). O template integra **uma vez** contra a API dele + um gateway.
+- **Padronizar UM channel manager** para todos os clientes: **Beds24** (~R$200/mês, mais barato
+  que a Smoobu ~R$400). O template integra **uma vez** contra a API v2 dele + um gateway.
 - **Abstrair atrás de uma interface de provider** (ex.: `ChannelManager.getCalendar()`,
   `.blockDates()`), para trocar de ferramenta depois sem reescrever o painel.
 - **Onboarding de cliente novo:** (1) criar a conta dele no channel manager; (2) fazer com ele
@@ -249,13 +251,13 @@ O painel nasce para ser **copiado para outros clientes do mesmo nicho** (pousada
 - **Painel replicável:** padronizar um channel manager e abstrair atrás de interface de
   provider; integrações viram dashboard de status, não formulário de chaves (ver 7.3).
 - **Segurança:** nenhum secret no site estático; secrets criptografados no servidor (ver 7.4).
-- **Channel manager:** **Smoobu** (Beds24 testada e descartada por onboarding falho).
+- **Channel manager:** **Beds24** (~R$200/mês; trocou a Smoobu ~R$400 por custo, 2026-07-24).
 - **TripAdvisor descartado** pelo cliente.
 - **Pagamento:** sinal online (PIX obrigatório) + resto no check-in (maquininha/PIX presencial);
   o split é lógica do painel, não do gateway. APP Max descartada.
 
 ### Em aberto
-- **% do sinal** a cobrar online; PIX via Smoobu+Stripe (curto prazo) x Mercado Pago no painel próprio.
+- **% do sinal** a cobrar online; PIX via Beds24+Stripe (curto prazo) x Mercado Pago no painel próprio.
 - Escolha final do **gateway** (Mercado Pago x PagSeguro).
 - Stack e hospedagem do painel (fora do GitHub Pages).
 - Fluxo de pagamento que respeite a trava de disponibilidade.
@@ -268,7 +270,7 @@ O painel nasce para ser **copiado para outros clientes do mesmo nicho** (pousada
 ## 10. Sequência sugerida de construção
 1. Regularizar acessos (Airbnb, Google Meu Negócio) e iniciar coleta de avaliações no Google
    com os hóspedes anteriores.
-2. Configurar o channel manager (Smoobu) e escolher o gateway (Mercado Pago x PagSeguro).
+2. Configurar o channel manager (Beds24) e escolher o gateway (Mercado Pago x PagSeguro).
 3. Modelar dados multi-propriedade.
 4. Calendário único + sincronização bidirecional.
 5. Tarifas por temporada + reservas/hóspedes (CRUD).

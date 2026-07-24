@@ -9,6 +9,16 @@ images/avaliacoes/
 # Deploy (helper local)
 .ftphost
 
+# Credenciais de FTP — LOCAL ONLY, nunca no git nem na hospedagem
+.ftpauth
+
+# Artefatos de deploy com hash de senha (basic auth) — LOCAL ONLY
+.deploy/
+
+# Fontes pesadas de imagem — masters locais, não vão para git nem hospedagem
+images/quartos/*.png
+*.psd
+
 # SO
 Thumbs.db
 .DS_Store

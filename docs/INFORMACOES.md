@@ -136,9 +136,9 @@ Extintores · CCTV nas áreas comuns e externas · Alarme · Chave de acesso · 
 ## 12. Operação e técnico
 - Reservas diretas integradas com Airbnb e Booking, bloqueio bidirecional de datas. `[CONFIRMADO]`
   **TripAdvisor descartado** pelo cliente (2026-06-24).
-- **Channel manager: Smoobu** `[DECIDIDO 2026-06-24]` (Beds24 testada e descartada por onboarding
-  falho). API + webhooks, conexão oficial Airbnb/Booking. Tarifas dos 4 quartos extraídas em
-  `docs/TARIFAS.md`.
+- **Channel manager: Beds24** `[DECIDIDO 2026-07-24]` (~R$200/mês; trocou a Smoobu ~R$400 por
+  custo). Cadastro concluído; Airbnb conectado, Booking conectado aguardando aceite. API v2 +
+  webhooks, conexão Airbnb/Booking. Tarifas dos 4 quartos extraídas em `docs/TARIFAS.md`.
 - **Arquitetura de integrações `[DECIDIDO 2026-06-24]`:** OTAs não dão chave de API ao dono; quem
   segura as conexões é o channel manager. O painel fala só com o channel manager (1 token) + o
   gateway (1 chave); **não tem campo de chave de OTA**; cada canal é conectado por autorização do
@@ -150,7 +150,7 @@ Extintores · CCTV nas áreas comuns e externas · Alarme · Chave de acesso · 
 - **Pagamento `[DECIDIDO 2026-06-24]`:** **sinal online** (PIX obrigatório; % a confirmar) +
   **restante no check-in** (maquininha/cartão ou PIX presencial). Split é lógica do painel/motor de
   reservas, não do gateway. **APP Max descartada** (não atende). Gateway tendendo **Mercado Pago**
-  ou **PagSeguro** (online + maquininha numa conta); Stripe via Smoobu como opção de curto prazo.
+  ou **PagSeguro** (online + maquininha numa conta); Stripe via Beds24 como opção de curto prazo.
   Cliente tem CNPJ. Reduz para ~3,9% vs 15% Airbnb / 18% Booking.
 - Preços por temporada / diária variável no painel. `[CONFIRMADO]`
 - Avaliações: pedido automático por e-mail ao fim da estadia → **Google Meu Negócio**. Avaliação
@@ -172,8 +172,9 @@ cancelamento · texto institucional/história da casa · ensaio fotográfico e d
 Quarto Duplo · confirmar taxa de limpeza e imposto municipal/turismo · confirmar 3ª pessoa do Triplo.
 (Diárias por quarto e condições de reserva já extraídas do Booking — ver `docs/TARIFAS.md`.)
 **Decisões em aberto:** link/nome do Airbnb · nome da igreja.
-**Decisões tomadas (2026-06-24):** arquitetura de integrações via channel manager (sem campo de
-chave de OTA) · painel replicável · **channel manager = Smoobu** (Beds24 descartada) ·
+**Decisões tomadas (2026-06-24, atualizado 2026-07-24):** arquitetura de integrações via channel
+manager (sem campo de chave de OTA) · painel replicável · **channel manager = Beds24** (~R$200/mês;
+trocou a Smoobu ~R$400 por custo em 2026-07-24) ·
 **TripAdvisor descartado** pelo cliente · **pagamento = sinal online (PIX) + resto no check-in**,
 APP Max descartada, gateway tendendo Mercado Pago/PagSeguro · avaliação não é portável, coletar
 com hóspedes reais no Google.

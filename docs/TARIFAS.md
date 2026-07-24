@@ -1,7 +1,7 @@
 # TARIFAS.md — Tarifas extraídas do extranet do Booking
 
 Dossiê de preços e disponibilidade extraído do **extranet do Booking** (propriedade ID
-`10779110`) para configurar a Smoobu e preencher os `[FALTA]` de preço no `INFORMACOES.md`.
+`10779110`) para configurar a Beds24 e preencher os `[FALTA]` de preço no `INFORMACOES.md`.
 
 ## Estrutura de tarifas no Booking
 - **Plano base:** "Totalmente flexível" (ID 47914099) — é o valor de referência da diária.
@@ -116,11 +116,11 @@ São João (24–28 jun) R$ 520, dezembro R$ 550, Réveillon fechado.
 `*` Triplo a confirmar (prints idênticos ao Duplo).
 
 **Leitura importante:** não é um "baixa × alta" binário. Há **4 patamares** de diária ao longo
-do ano (baixa, São João, julho, dezembro) e o Booking aplica isso **data a data**. Para a Smoobu
+do ano (baixa, São João, julho, dezembro) e o Booking aplica isso **data a data**. Para a Beds24
 (e o site), precisamos que o cliente **defina os intervalos de cada temporada** — não dá para
 inferir só do calendário, porque os blocos "Fechado" são bloqueios pontuais, não temporada.
 
-**Para configurar na Smoobu, faltam do cliente:**
+**Para configurar na Beds24, faltam do cliente:**
 - Os **intervalos de datas** de cada patamar (o que conta como baixa, alta, festas) ao longo do ano.
 - **Réveillon e Carnaval:** datas exatas + **preço da casa inteira** (não está no Booking, pois lá
   os quartos ficam fechados nessas datas).
