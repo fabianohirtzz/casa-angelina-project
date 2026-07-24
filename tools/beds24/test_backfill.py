@@ -39,26 +39,30 @@ def _bookings():
 
 def test_run_backfill_creates_reservation_and_block(conn):
     client = FakeClient(_properties(), _bookings())
-    stats = backfill.run_backfill(conn, client)
-    assert stats["reservations"] == 1
-    assert stats["blocks"] == 1
-    with conn.cursor() as cur:
-        cur.execute("select count(*) from casa_angelina.reservations where beds24_booking_id='1'")
-        assert cur.fetchone()[0] == 1
-        cur.execute("select count(*) from casa_angelina.calendar_blocks where source='beds24'")
-        assert cur.fetchone()[0] >= 1
-    # limpa (o teste comitou; nao deixar lixo no banco compartilhado)
-    _cleanup(conn)
+    try:
+        stats = backfill.run_backfill(conn, client)
+        assert stats["reservations"] == 1
+        assert stats["blocks"] == 1
+        with conn.cursor() as cur:
+            cur.execute("select count(*) from casa_angelina.reservations where beds24_booking_id='1'")
+            assert cur.fetchone()[0] == 1
+            cur.execute("select count(*) from casa_angelina.calendar_blocks where source='beds24'")
+            assert cur.fetchone()[0] >= 1
+    finally:
+        # limpa (o teste comitou; nao deixar lixo no banco compartilhado)
+        _cleanup(conn)
 
 
 def test_run_backfill_is_idempotent(conn):
     client = FakeClient(_properties(), _bookings())
-    backfill.run_backfill(conn, client)
-    backfill.run_backfill(conn, client)
-    with conn.cursor() as cur:
-        cur.execute("select count(*) from casa_angelina.reservations where beds24_booking_id='1'")
-        assert cur.fetchone()[0] == 1  # nao duplicou apos 2 rodadas
-    _cleanup(conn)
+    try:
+        backfill.run_backfill(conn, client)
+        backfill.run_backfill(conn, client)
+        with conn.cursor() as cur:
+            cur.execute("select count(*) from casa_angelina.reservations where beds24_booking_id='1'")
+            assert cur.fetchone()[0] == 1  # nao duplicou apos 2 rodadas
+    finally:
+        _cleanup(conn)
 
 
 def _cleanup(conn):
