@@ -40,13 +40,11 @@ class Beds24Client:
             data = body.get("data", [])
             out.extend(data)
             self._respect_rate_limit(resp)
-            pages = body.get("pages")
-            if pages is not None:
-                if page >= int(pages):
-                    break
-            elif not data:
-                break
             if not data:
+                break
+            pages = body.get("pages")
+            next_exists = bool(pages.get("nextPageExists")) if isinstance(pages, dict) else False
+            if not next_exists:
                 break
             page += 1
         return out

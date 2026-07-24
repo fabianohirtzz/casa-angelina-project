@@ -18,6 +18,9 @@ images/avaliacoes/
 # Credenciais do Beds24 — LOCAL ONLY
 .beds24auth
 
+# JSON cru capturado da API Beds24 (dado de hóspede real) — LOCAL ONLY
+tools/beds24/fixtures/
+
 # Artefatos de deploy com hash de senha (basic auth) — LOCAL ONLY
 .deploy/
 

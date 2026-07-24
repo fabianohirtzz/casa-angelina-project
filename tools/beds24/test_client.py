@@ -35,10 +35,14 @@ def test_get_properties_sends_token_and_returns_data():
 
 
 def test_get_bookings_follows_pages():
-    # pagina 1 diz que ha 2 paginas; pagina 2 fecha
+    # pagina 1 diz que ha proxima pagina (formato real: pages e um objeto); pagina 2 fecha
     http = FakeHttp([
-        FakeResp({"success": True, "pages": 2, "data": [{"id": 10}, {"id": 11}]}),
-        FakeResp({"success": True, "pages": 2, "data": [{"id": 12}]}),
+        FakeResp({"success": True,
+                  "pages": {"nextPageExists": True, "nextPageLink": "x"},
+                  "data": [{"id": 10}, {"id": 11}]}),
+        FakeResp({"success": True,
+                  "pages": {"nextPageExists": False, "nextPageLink": None},
+                  "data": [{"id": 12}]}),
     ])
     c = Beds24Client("acc", http=http)
     got = c.get_bookings(propertyId=1)
