@@ -62,21 +62,23 @@ def test_seed_raises_when_canonical_missing(conn):
 
 
 def test_seed_maps_superiors_by_id_when_names_truncated(conn):
-    # reproduz a realidade: nomes truncados em 50 chars deixam os 2 Superior identicos.
+    # reproduz a realidade: Beds24 trunca nomes em 50 chars, deixando os 2 Superior
+    # identicos por nome. ids sinteticos + room_map explicito -> isolado de dados reais.
     trunc = "Casa Angelina (Pousada), Quarto Superior com Ca..."
     payload = {
-        "id": 343823, "name": "Casa Angelina",
+        "id": 4242, "name": "Casa Angelina",
         "roomTypes": [
-            {"id": 710280, "name": "Casa Angelina (Pousada), Quarto Duplo com Varanda"},
-            {"id": 710281, "name": "Casa Angelina (Pousada), Quarto Triplo com Vist..."},
-            {"id": 710282, "name": trunc},
-            {"id": 710283, "name": trunc},
+            {"id": 101, "name": "Casa Angelina (Pousada), Quarto Duplo com Varanda"},
+            {"id": 102, "name": "Casa Angelina (Pousada), Quarto Triplo com Vist..."},
+            {"id": 103, "name": trunc},
+            {"id": 104, "name": trunc},
         ],
     }
+    room_map = {"103": "superior-king-1", "104": "superior-king-2"}
     with conn.cursor() as cur:
-        out = seed.seed_property_and_rooms(cur, payload)
-        rid_1 = out["rooms_by_beds24_id"]["710282"]
-        rid_2 = out["rooms_by_beds24_id"]["710283"]
+        out = seed.seed_property_and_rooms(cur, payload, room_map=room_map)
+        rid_1 = out["rooms_by_beds24_id"]["103"]
+        rid_2 = out["rooms_by_beds24_id"]["104"]
         cur.execute("select slug from casa_angelina.rooms where id=%s", (rid_1,))
         assert cur.fetchone()[0] == "superior-king-1"
         cur.execute("select slug from casa_angelina.rooms where id=%s", (rid_2,))
