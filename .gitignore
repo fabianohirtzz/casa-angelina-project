@@ -12,6 +12,12 @@ images/avaliacoes/
 # Credenciais de FTP — LOCAL ONLY, nunca no git nem na hospedagem
 .ftpauth
 
+# Credenciais do Supabase — LOCAL ONLY
+.supabaseauth
+
+# Credenciais do Beds24 — LOCAL ONLY
+.beds24auth
+
 # Artefatos de deploy com hash de senha (basic auth) — LOCAL ONLY
 .deploy/
 
