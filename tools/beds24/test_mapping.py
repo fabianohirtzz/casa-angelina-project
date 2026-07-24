@@ -85,3 +85,30 @@ def test_guest_fields():
     assert g["email"] == "ana@x.com"
     assert g["phone"] == "5573999"
     assert g["country"] == "BR"
+
+
+def test_map_status_unknown_raises():
+    with pytest.raises(ValueError):
+        mapping.map_status("totally_unknown")
+
+
+def test_group_ref_none_when_masterid_absent():
+    row = mapping.map_booking_to_reservation(_booking(masterId=0), room_id="R", guest_id=None)
+    assert row["group_ref"] is None
+    b = _booking()
+    del b["masterId"]
+    row2 = mapping.map_booking_to_reservation(b, room_id="R", guest_id=None)
+    assert row2["group_ref"] is None
+
+
+def test_num_guests_none_when_zero():
+    row = mapping.map_booking_to_reservation(_booking(numAdult=0, numChild=0), room_id="R", guest_id=None)
+    assert row["num_guests"] is None
+
+
+def test_guest_phone_falls_back_to_mobile():
+    b = _booking()
+    del b["phone"]
+    b["mobile"] = "55MOBILE"
+    g = mapping.guest_fields(b)
+    assert g["phone"] == "55MOBILE"
