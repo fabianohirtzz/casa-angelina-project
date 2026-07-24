@@ -42,9 +42,42 @@ def test_seed_is_idempotent(conn):
         assert cur.fetchone()[0] == 4  # nao duplicou
 
 
-def test_seed_raises_on_unknown_room(conn):
+def test_seed_ignores_unmapped_extra_room(conn):
     payload = _payload()
-    payload["roomTypes"].append({"id": 999, "name": "Quarto Fantasma"})
+    payload["roomTypes"].insert(0, {"id": 710279, "name": "Room 1"})  # placeholder do Beds24
+    with conn.cursor() as cur:
+        out = seed.seed_property_and_rooms(cur, payload)
+        cur.execute("select count(*) from casa_angelina.rooms where property_id=%s",
+                    (out["property_id"],))
+        assert cur.fetchone()[0] == 4  # Room 1 ignorado, 4 canonicos seedados
+        assert "710279" not in out["rooms_by_beds24_id"]
+
+
+def test_seed_raises_when_canonical_missing(conn):
+    payload = _payload()
+    payload["roomTypes"] = payload["roomTypes"][:3]  # remove um quarto canonico
     with conn.cursor() as cur:
         with pytest.raises(ValueError):
             seed.seed_property_and_rooms(cur, payload)
+
+
+def test_seed_maps_superiors_by_id_when_names_truncated(conn):
+    # reproduz a realidade: nomes truncados em 50 chars deixam os 2 Superior identicos.
+    trunc = "Casa Angelina (Pousada), Quarto Superior com Ca..."
+    payload = {
+        "id": 343823, "name": "Casa Angelina",
+        "roomTypes": [
+            {"id": 710280, "name": "Casa Angelina (Pousada), Quarto Duplo com Varanda"},
+            {"id": 710281, "name": "Casa Angelina (Pousada), Quarto Triplo com Vist..."},
+            {"id": 710282, "name": trunc},
+            {"id": 710283, "name": trunc},
+        ],
+    }
+    with conn.cursor() as cur:
+        out = seed.seed_property_and_rooms(cur, payload)
+        rid_1 = out["rooms_by_beds24_id"]["710282"]
+        rid_2 = out["rooms_by_beds24_id"]["710283"]
+        cur.execute("select slug from casa_angelina.rooms where id=%s", (rid_1,))
+        assert cur.fetchone()[0] == "superior-king-1"
+        cur.execute("select slug from casa_angelina.rooms where id=%s", (rid_2,))
+        assert cur.fetchone()[0] == "superior-king-2"

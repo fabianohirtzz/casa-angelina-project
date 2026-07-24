@@ -10,6 +10,18 @@ CANONICAL_ROOMS = [
 ]
 _BY_SLUG = {r["slug"]: r for r in CANONICAL_ROOMS}
 
+# Mapeamento autoritativo beds24_room_id -> slug canonico (especifico deste deployment).
+# Necessario porque o Beds24 TRUNCA nomes de quarto em 50 chars: com o prefixo
+# "Casa Angelina (Pousada), " que veio do Airbnb, os dois Superior King ficam com nome
+# truncado IDENTICO e nao dao pra distinguir por nome. Mapear por id resolve.
+# (Quando o painel virar template p/ outros clientes, isto sai para config por-cliente.)
+CASA_ANGELINA_ROOM_MAP = {
+    "710280": "duplo-varanda",
+    "710281": "triplo-vista-piscina",
+    "710282": "superior-king-1",
+    "710283": "superior-king-2",
+}
+
 
 def match_room(beds24_room_name):
     n = (beds24_room_name or "").strip().lower()
@@ -24,7 +36,9 @@ def match_room(beds24_room_name):
     return None
 
 
-def seed_property_and_rooms(cur, property_payload):
+def seed_property_and_rooms(cur, property_payload, room_map=None):
+    if room_map is None:
+        room_map = CASA_ANGELINA_ROOM_MAP
     beds24_property_id = str(property_payload["id"])
     name = property_payload.get("name") or "Casa Angelina"
     cur.execute(
@@ -37,13 +51,13 @@ def seed_property_and_rooms(cur, property_payload):
     property_id = cur.fetchone()[0]
 
     rooms_by_beds24_id = {}
-    room_types = property_payload.get("roomTypes") or []
-    for rt in room_types:
-        slug = match_room(rt.get("name"))
-        if slug is None:
-            raise ValueError(f"roomType do Beds24 nao casa com quarto canonico: {rt.get('name')!r}")
-        spec = _BY_SLUG[slug]
+    seeded_slugs = set()
+    for rt in property_payload.get("roomTypes") or []:
         beds24_room_id = str(rt["id"])
+        slug = room_map.get(beds24_room_id) or match_room(rt.get("name"))
+        if slug is None:
+            continue  # quarto nao reconhecido (ex.: placeholder "Room 1" do Beds24) -> ignora
+        spec = _BY_SLUG[slug]
         cur.execute(
             "insert into casa_angelina.rooms "
             "(property_id,beds24_room_id,name,slug,capacity,sort_order) "
@@ -55,4 +69,9 @@ def seed_property_and_rooms(cur, property_payload):
              spec["capacity"], spec["sort_order"]),
         )
         rooms_by_beds24_id[beds24_room_id] = cur.fetchone()[0]
+        seeded_slugs.add(slug)
+
+    missing = [s for s in _BY_SLUG if s not in seeded_slugs]
+    if missing:
+        raise ValueError(f"quartos canonicos ausentes no payload do Beds24: {missing}")
     return {"property_id": property_id, "rooms_by_beds24_id": rooms_by_beds24_id}
